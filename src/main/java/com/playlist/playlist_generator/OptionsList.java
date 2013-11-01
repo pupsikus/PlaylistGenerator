@@ -7,12 +7,12 @@ import java.util.ArrayList;
  */
 public class OptionsList {
     String OptionDesc;
-    ArrayList<String> OptionPaths = new ArrayList<String>();
+    ArrayList<String> OptionPath = new ArrayList<String>();
     int image;
 
     OptionsList(String _describe, ArrayList<String> _path, int _image) {
         OptionDesc = _describe;
-        OptionPaths = _path;
+        OptionPath = _path;
         image = _image;
     }
 
@@ -20,7 +20,11 @@ public class OptionsList {
         return OptionDesc;
     }
 
+    int getOptionPathSize(){
+        return OptionPath.size();
+    }
+
     String getPath(int index){
-        return OptionPaths.get(index);
+        return OptionPath.get(index);
     }
 }

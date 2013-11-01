@@ -23,7 +23,6 @@ public class FileManager_Activity extends ListActivity {
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
     private BoxAdapter boxAdapter;
-    private OtherBoxAdapter OptionBoxAdapter;
 
     //when new activity starts it uses some layout
     @Override

@@ -3,7 +3,6 @@ package com.playlist.playlist_generator;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -15,15 +14,17 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends ListActivity implements OnClickListener {
     final int REQUEST_CODE_OPTION = 1;
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
-    private OtherBoxAdapter OptionBoxAdapter;
+    public OtherBoxAdapter OptionBoxAdapter;
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
     List<String> trackNames; //Playable Track Titles
+    Collection<String> trackNamesCollection;
     Random random; //used for shuffle
     File path;
     Button btnSelectFolder; //Button Select Folder
@@ -38,10 +39,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
         setContentView(R.layout.activity_main);
         //Search button by ID
         btnSelectFolder = (Button) findViewById(R.id.button_select_folder);
-
+        btnGeneratePL = (Button) findViewById(R.id.generate);
         //Button click
-        //btnSelectFolder.setOnClickListener(OnClickBtnSelectFolder);
         btnSelectFolder.setOnClickListener(this);
+        btnGeneratePL.setOnClickListener(this);
     }
 
     @Override
@@ -54,13 +55,13 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 break;
             case R.id.generate:
                 // TODO Auto-generated method stub
-                trackNames = new ArrayList<String>();
-                random = new Random();
-                addTracks(getTracks());
+                PLGenerator();
+                break;
             default:
                 break;
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // запишем в лог значения requestCode и resultCode
@@ -98,26 +99,43 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
     }
 
+    private void PLGenerator(){
+        String ItemPath;
+        trackNames = new ArrayList<String>();
+        for(int i=0;i < MusicOptionsList.size();i++){
+            for(int j=0; j < MusicOptionsList.get(i).getOptionPathSize(); j++){
+                //MusicOptionsList.get(i);
+                ItemPath = MusicOptionsList.get(i).getPath(j);
+                addTracks(getTracks(ItemPath));
+            }
+
+        }
+        random = new Random();
+
+    }
+
     //Generate a String Array that represents all of the files found
-    private String[] getTracks(){
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            path = Environment.getExternalStorageDirectory();
-            String[] temp = path.list();
-            return temp;
+    private ArrayList<String > getTracks(String MusicFolderPath){
+        path = new File(MusicFolderPath);
+        String[] temp = path.list();
+        File[] files = path.listFiles();
+        ArrayList<String> dirFiles = new ArrayList<String>();
+        for(File file : files){
+            dirFiles.add(file.getAbsolutePath());
         }
-        else {
-            Toast.makeText(getBaseContext(), "SD Card is either mounted elsewhere or is unusable", Toast.LENGTH_LONG).show();
-        }
-        return null;
+
+        return dirFiles;
     }
 
     //Adds the playable files to the trackNames List
-    private void addTracks(String[] temp){
-        if(temp != null){
-            for(int i = 0; i < temp.length; i++){
+    private void addTracks(ArrayList<String>  dirFiles){
+        if(dirFiles != null){
+            for(int i = 0; i < dirFiles.size(); i++){
                 //Only accept files that have one of the extensions in the EXTENSIONS array
-                if(trackChecker(temp[i])){
-                    trackNames.add(temp[i]);
+
+                if(trackChecker(dirFiles.get(i))){
+                    trackNames.add(dirFiles.get(i));
+                    //trackNamesCollection.add(temp[i]);
                 }
             }
             Toast.makeText(getBaseContext(), "Loaded " + Integer.toString(trackNames.size()) + " Tracks", Toast.LENGTH_SHORT).show();
