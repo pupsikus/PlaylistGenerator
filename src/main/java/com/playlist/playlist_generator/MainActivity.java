@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends ListActivity implements OnClickListener {
+    final String LOG_TAG = "myLogs";
     final int REQUEST_CODE_OPTION = 1;
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
@@ -80,7 +81,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 case REQUEST_CODE_OPTION:
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
                     ListSize=MusicOptionsList.size()+1;
-                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher));
+                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,"1"));
                     OptionBoxAdapter = new OtherBoxAdapter(this, MusicOptionsList);
 
                     ListView lvMain = (ListView) findViewById(android.R.id.list);
@@ -107,10 +108,12 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
     }
 
+    //Generate playlist
     private void PLGenerator(){
         String ItemPath;
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
+        //Looking for directories with songs from Folder Lists
         for(int i=0;i < MusicOptionsList.size();i++){
             dirFiles.add(new ArrayList<String>());
             for(int j=0; j < MusicOptionsList.get(i).getOptionPathSize(); j++){
@@ -127,29 +130,22 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
         //Try code and catch exceptions
         try {
-           /* We have to use the openFileOutput()-method
-           * We chose MODE_WORLD_READABLE, because
-           * we have nothing to hide in our file */
+            //Check for mounted SD
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
+                return;
+            }
+            File file = new File(Environment.getExternalStorageDirectory() + "/Music","Test.m3u");
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
 
-            File file = new File(Environment.getExternalStorageDirectory() + "/Music", "Test.m3u");
-            PrintWriter writer = new PrintWriter(file, "Unicode");
-            //FileOutputStream osw = new FileOutputStream(file);
-             //FileOutputStream fOut = openFileOutput("Test.m3u",MODE_WORLD_WRITEABLE);
-            //OutputStreamWriter osw = new OutputStreamWriter(fOut);
-
-            // Write the string to the file
+            // Write path to song to the file
             for (int i=0;i<OptionsFilesList.size();i++){
                 for(int j=0;j<OptionsFilesList.get(i).size();j++){
-                    //osw.write(OptionsFilesList.get(i).get(j).toString());
-                    //osw.write(OptionsFilesList.get(i).get(j).getBytes());
-                    //osw.write('\n');
                     writer.println(OptionsFilesList.get(i).get(j).toString()+"\r");
                 }
             }
            /* ensure that everything is
             * really written out and close */
-            //osw.flush();
-            //osw.close();
             writer.flush();
             writer.close();
         }
@@ -189,7 +185,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
             Toast.makeText(getBaseContext(), "Loaded " + Integer.toString(trackNames.size()) + " Tracks", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     //Checks to make sure that the track to be loaded has a correct extenson
     private boolean trackChecker(String trackToTest){

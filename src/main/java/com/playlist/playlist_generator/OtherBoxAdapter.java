@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class OtherBoxAdapter extends BaseAdapter{
         //описание и картинка
         ((TextView) view.findViewById(R.id.OptionDesc)).setText(p.OptionDesc);
         ((ImageView) view.findViewById(R.id.OptionImage)).setImageResource(p.image);
+        ((EditText) view.findViewById(R.id.OptionSongCounter)).setText(p.SongCounter);
 
         return view;
     }
