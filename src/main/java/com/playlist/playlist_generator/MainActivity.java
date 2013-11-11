@@ -9,35 +9,28 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends ListActivity implements OnClickListener {
+    final String LOG_TAG = "myLogs";
     final int REQUEST_CODE_OPTION = 1;
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
+    private static long NumOfTracks;
     List<String> trackNames; //Playable Track Titles
-    Collection<String> trackNamesCollection;
-    Random random; //used for shuffle
-    File path;
     Button btnSelectFolder; //Button Select Folder
     Button btnGeneratePL; //Button Generate Play List
-    TextView tvName;
+    EditText etSongCounter;
     int ListSize;
 
 
@@ -80,13 +73,12 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 case REQUEST_CODE_OPTION:
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
                     ListSize=MusicOptionsList.size()+1;
-                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher));
+                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,"1"));
                     OptionBoxAdapter = new OtherBoxAdapter(this, MusicOptionsList);
 
                     ListView lvMain = (ListView) findViewById(android.R.id.list);
                     lvMain.setAdapter(OptionBoxAdapter);
-                    tvName=(TextView) findViewById(R.id.hello_world);
-                    tvName.setText("Folders generated!");
+                    lvMain.setItemsCanFocus(true);
                     checkList();
                     break;
             }
@@ -107,10 +99,12 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
     }
 
+    //Generate playlist
     private void PLGenerator(){
         String ItemPath;
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
+        //Looking for directories with songs from Folder Lists
         for(int i=0;i < MusicOptionsList.size();i++){
             dirFiles.add(new ArrayList<String>());
             for(int j=0; j < MusicOptionsList.get(i).getOptionPathSize(); j++){
@@ -120,36 +114,29 @@ public class MainActivity extends ListActivity implements OnClickListener {
             Collections.shuffle(dirFiles.get(i));
         }
         CreatePList(dirFiles);
-        random = new Random();
+        Toast.makeText(getBaseContext(), "Loaded " + Long.toString(NumOfTracks) + " Tracks", Toast.LENGTH_SHORT).show();
 
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
         //Try code and catch exceptions
         try {
-           /* We have to use the openFileOutput()-method
-           * We chose MODE_WORLD_READABLE, because
-           * we have nothing to hide in our file */
+            //Check for mounted SD
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
+                return;
+            }
+            File file = new File(Environment.getExternalStorageDirectory() + "/Music","Test.m3u");
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
 
-            File file = new File(Environment.getExternalStorageDirectory() + "/Music", "Test.m3u");
-            PrintWriter writer = new PrintWriter(file, "Unicode");
-            //FileOutputStream osw = new FileOutputStream(file);
-             //FileOutputStream fOut = openFileOutput("Test.m3u",MODE_WORLD_WRITEABLE);
-            //OutputStreamWriter osw = new OutputStreamWriter(fOut);
-
-            // Write the string to the file
+            // Write path to song to the file
             for (int i=0;i<OptionsFilesList.size();i++){
                 for(int j=0;j<OptionsFilesList.get(i).size();j++){
-                    //osw.write(OptionsFilesList.get(i).get(j).toString());
-                    //osw.write(OptionsFilesList.get(i).get(j).getBytes());
-                    //osw.write('\n');
-                    writer.println(OptionsFilesList.get(i).get(j).toString()+"\r");
+                    writer.println(OptionsFilesList.get(i).get(j)+"\r");
                 }
             }
            /* ensure that everything is
             * really written out and close */
-            //osw.flush();
-            //osw.close();
             writer.flush();
             writer.close();
         }
@@ -165,7 +152,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         File[] fList = directory.listFiles();
         for (File file : fList) {
             if (file.isFile()) {
-                if(trackChecker(file.getName().toString())){
+                if(trackChecker(file.getName())){
                     files.add(file.getAbsolutePath());
                 }
             } else if (file.isDirectory()) {
@@ -186,15 +173,15 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     //trackNamesCollection.add(temp[i]);
                 }
             }
-            Toast.makeText(getBaseContext(), "Loaded " + Integer.toString(trackNames.size()) + " Tracks", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getBaseContext(), "Loaded " + Integer.toString(trackNames.size()) + " Tracks", Toast.LENGTH_SHORT).show();
+            NumOfTracks= trackNames.size();
         }
     }
 
-
     //Checks to make sure that the track to be loaded has a correct extenson
     private boolean trackChecker(String trackToTest){
-        for(int j = 0; j < EXTENSIONS.length; j++){
-            if(trackToTest.contains(EXTENSIONS[j])){
+        for (String EXTENSION : EXTENSIONS) {
+            if (trackToTest.contains(EXTENSION)) {
                 return true;
             }
         }
