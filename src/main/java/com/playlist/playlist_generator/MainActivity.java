@@ -84,7 +84,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
             }
             // если вернулось не ОК
         } else {
-            Toast.makeText(this, "Wrong result", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Wrong result", Toast.LENGTH_SHORT).show();
         }
     }
 
