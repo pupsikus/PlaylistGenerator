@@ -2,7 +2,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:descendantFocusability="beforeDescendants">
+    android:descendantFocusability="blocksDescendants">
         <Button
             android:text="@string/button_select_folder"
             android:layout_width="wrap_content"
@@ -17,6 +17,25 @@
             android:layout_height="0dip"
             android:layout_weight="1">
         </ListView>
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/tlPLName">
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvPLName"
+                    android:text="@string/tvPLName"/>
+                <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/etPLName"
+                android:inputType="textCapWords"
+                android:hint="@string/etPLName"/>
+            </TableRow>
+        </TableLayout>
         <Button
             android:text="@string/generate_playlist"
             android:layout_width="wrap_content"
@@ -25,6 +44,13 @@
             android:layout_gravity="center_horizontal"
             android:visibility="invisible"
             android:layout_weight="0">
+        </Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ExitApp"
+            android:text="@string/ExitApp"
+            android:layout_gravity="center_horizontal">
         </Button>
 </LinearLayout>
 

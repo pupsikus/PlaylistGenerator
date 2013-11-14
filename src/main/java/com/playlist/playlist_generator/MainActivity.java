@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,7 +31,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
     List<String> trackNames; //Playable Track Titles
     Button btnSelectFolder; //Button Select Folder
     Button btnGeneratePL; //Button Generate Play List
-    EditText etSongCounter;
+    Button btnExitApp; //Exit application
+    EditText etPLName;
+    TableLayout tlPLName;
     int ListSize;
 
 
@@ -41,9 +44,12 @@ public class MainActivity extends ListActivity implements OnClickListener {
         //Search button by ID
         btnSelectFolder = (Button) findViewById(R.id.button_select_folder);
         btnGeneratePL = (Button) findViewById(R.id.generate);
+        btnExitApp = (Button) findViewById(R.id.ExitApp);
         //Button click
         btnSelectFolder.setOnClickListener(this);
         btnGeneratePL.setOnClickListener(this);
+        btnExitApp.setOnClickListener(this);
+
     }
 
     @Override
@@ -57,6 +63,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
             case R.id.generate:
                 // TODO Auto-generated method stub
                 PLGenerator();
+                break;
+            case R.id.ExitApp:
+                ExitApp();
                 break;
             default:
                 break;
@@ -73,7 +82,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 case REQUEST_CODE_OPTION:
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
                     ListSize=MusicOptionsList.size()+1;
-                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,"1"));
+                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,""));
                     OptionBoxAdapter = new OtherBoxAdapter(this, MusicOptionsList);
 
                     ListView lvMain = (ListView) findViewById(android.R.id.list);
@@ -83,8 +92,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     break;
             }
             // если вернулось не ОК
-        } else {
-            //Toast.makeText(this, "Wrong result", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -93,19 +100,48 @@ public class MainActivity extends ListActivity implements OnClickListener {
         if(MusicOptionsList.size()!=0){
             btnGeneratePL=(Button) findViewById(R.id.generate);
             btnGeneratePL.setVisibility(View.VISIBLE);
+            tlPLName=(TableLayout) findViewById(R.id.tlPLName);
+            tlPLName.setVisibility(View.VISIBLE);
         }
         else{
+            btnGeneratePL=(Button) findViewById(R.id.generate);
             btnGeneratePL.setVisibility(View.GONE);
+            tlPLName=(TableLayout) findViewById(R.id.tlPLName);
+            tlPLName.setVisibility(View.GONE);
         }
     }
 
     //Generate playlist
     private void PLGenerator(){
+        ListView lvMain = (ListView) findViewById(android.R.id.list);
+        View view;
+        EditText etSongCounter;
         String ItemPath;
+        Long SongCounter;
+
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
         //Looking for directories with songs from Folder Lists
         for(int i=0;i < MusicOptionsList.size();i++){
+            //Read edited num of songs for PL option
+            view = lvMain.getChildAt(i);
+            etSongCounter=(EditText) view.findViewById(R.id.OptionSongCounter);
+            try {
+                SongCounter = Long.parseLong(etSongCounter.getText().toString());
+                if (SongCounter==0){
+                Log.d(LOG_TAG, "Счетчик песен равен 0. Ошибка ");
+                return;
+                }
+            }
+            catch (NumberFormatException ioe)
+            {
+                Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
+                ioe.printStackTrace();
+            }
+            catch (NullPointerException npe){
+                npe.printStackTrace();
+            }
+
             dirFiles.add(new ArrayList<String>());
             for(int j=0; j < MusicOptionsList.get(i).getOptionPathSize(); j++){
                 ItemPath = MusicOptionsList.get(i).getPath(j);
@@ -115,19 +151,27 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
         CreatePList(dirFiles);
         Toast.makeText(getBaseContext(), "Loaded " + Long.toString(NumOfTracks) + " Tracks", Toast.LENGTH_SHORT).show();
-
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
         //Try code and catch exceptions
+        String PLName;
         try {
             //Check for mounted SD
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
                 return;
             }
-            File file = new File(Environment.getExternalStorageDirectory() + "/Music","Test.m3u");
-            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            etPLName=(EditText) findViewById(R.id.etPLName);
+            if(etPLName.getText().toString().length()==0){
+                PLName = getString(R.string.etPLName);
+            }
+            else{
+                PLName = etPLName.getText().toString();
+            }
+            PLName=PLName+".m3u";
+            File file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
+            PrintWriter writer = new PrintWriter(file, "utf-8");
 
             // Write path to song to the file
             for (int i=0;i<OptionsFilesList.size();i++){
@@ -167,7 +211,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
         if(dirFiles != null){
             for(int i = 0; i < dirFiles.size(); i++){
                 //Only accept files that have one of the extensions in the EXTENSIONS array
-
                 if(trackChecker(dirFiles.get(i))){
                     trackNames.add(dirFiles.get(i));
                     //trackNamesCollection.add(temp[i]);
@@ -179,7 +222,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     }
 
     //Checks to make sure that the track to be loaded has a correct extenson
-    private boolean trackChecker(String trackToTest){
+    public boolean trackChecker(String trackToTest){
         for (String EXTENSION : EXTENSIONS) {
             if (trackToTest.contains(EXTENSION)) {
                 return true;
@@ -188,10 +231,14 @@ public class MainActivity extends ListActivity implements OnClickListener {
         return false;
     }
 
+    private void ExitApp(){
+        finish();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
 }

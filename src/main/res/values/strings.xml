@@ -6,5 +6,8 @@
     <string name="button_select_folder" >Select folder</string>
     <string name="button_OK" >OK</string>
     <string name="generate_playlist" >Generate</string>
+    <string name="tvPLName" >Playlist name:</string>
+    <string name="etPLName" >PlaylistGenerator</string>
+    <string name="ExitApp" >Exit</string>
 
 </resources>

@@ -25,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
+        android:hint="1"
         android:clickable="true"
         android:focusable="true"
         android:textSize="20sp"

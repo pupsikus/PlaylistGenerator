@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,11 +17,10 @@ import java.util.ArrayList;
  * Created by PC_4i_7 on 9/23/13.
  */
 public class FileManager_Activity extends ListActivity {
-    //private List<String> directoryEntries = new ArrayList<String>();
-    public static ArrayList<OptionsList> SelectedMusicDirList = new ArrayList<OptionsList>();
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
     private BoxAdapter boxAdapter;
+    MainActivity MainSample = new MainActivity();
 
     //when new activity starts it uses some layout
     @Override
@@ -52,10 +50,6 @@ public class FileManager_Activity extends ListActivity {
                 // настраиваем список
                 ListView lvMain = (ListView) findViewById(android.R.id.list);
                 lvMain.setAdapter(boxAdapter);
-            }
-            else{
-                //Folder is system and we do not enter
-                //....
             }
         }
         else {
@@ -91,13 +85,20 @@ public class FileManager_Activity extends ListActivity {
         //clear list
         directoryEntries.clear();
 
-        if (this.currentDirectory.getParent() != null)
+        if (this.currentDirectory.getParent() != null){
             directoryEntries.add(new DirectoryList("..","..", R.drawable.ic_launcher, false));
-
+        }
         //add every file into list
         for (File file : files) {
             if (file.canRead()){
-                directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                if(file.isFile()){
+                    if(MainSample.trackChecker(file.getName())){
+                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                    }
+                }
+                else{
+                    directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                }
             }
         }
     }
