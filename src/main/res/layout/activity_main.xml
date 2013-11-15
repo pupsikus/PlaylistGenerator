@@ -4,7 +4,7 @@
     android:layout_height="fill_parent">
         <Button
             android:text="@string/button_select_folder"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/button_select_folder"
             android:layout_gravity="center_horizontal"
@@ -17,7 +17,7 @@
             android:layout_weight="1">
         </ListView>
         <TableLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:visibility="invisible"
             android:id="@+id/tlPLName">
@@ -28,16 +28,16 @@
                     android:id="@+id/tvPLName"
                     android:text="@string/tvPLName"/>
                 <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/etPLName"
-                android:inputType="textCapWords"
-                android:hint="@string/etPLName"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etPLName"
+                    android:inputType="textCapWords"
+                    android:hint="@string/etPLName"/>
             </TableRow>
         </TableLayout>
         <Button
             android:text="@string/generate_playlist"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/generate"
             android:layout_gravity="center_horizontal"

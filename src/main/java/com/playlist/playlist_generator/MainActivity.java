@@ -61,8 +61,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 startActivityForResult(intent, REQUEST_CODE_OPTION);
                 break;
             case R.id.generate:
-                // TODO Auto-generated method stub
-                PLGenerator();
+                PLGenerator_Button();
                 break;
             case R.id.ExitApp:
                 ExitApp();
@@ -112,36 +111,13 @@ public class MainActivity extends ListActivity implements OnClickListener {
     }
 
     //Generate playlist
-    private void PLGenerator(){
-        ListView lvMain = (ListView) findViewById(android.R.id.list);
-        View view;
-        EditText etSongCounter;
+    private void PLGenerator_Button(){
         String ItemPath;
-        Long SongCounter;
 
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
         //Looking for directories with songs from Folder Lists
         for(int i=0;i < MusicOptionsList.size();i++){
-            //Read edited num of songs for PL option
-            view = lvMain.getChildAt(i);
-            etSongCounter=(EditText) view.findViewById(R.id.OptionSongCounter);
-            try {
-                SongCounter = Long.parseLong(etSongCounter.getText().toString());
-                if (SongCounter==0){
-                Log.d(LOG_TAG, "Счетчик песен равен 0. Ошибка ");
-                return;
-                }
-            }
-            catch (NumberFormatException ioe)
-            {
-                Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
-                ioe.printStackTrace();
-            }
-            catch (NullPointerException npe){
-                npe.printStackTrace();
-            }
-
             dirFiles.add(new ArrayList<String>());
             for(int j=0; j < MusicOptionsList.get(i).getOptionPathSize(); j++){
                 ItemPath = MusicOptionsList.get(i).getPath(j);
@@ -154,31 +130,55 @@ public class MainActivity extends ListActivity implements OnClickListener {
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
+        // TODO Auto-generated method stub
         //Try code and catch exceptions
         String PLName;
+        ArrayList<Integer> SongCounterList = new ArrayList<Integer>();
+        long NumOfSongs = 0;
+        long NumOfIterations;
+        Integer OptionsCounter=0;
+        long index=0;
+        int arr_of_indexes[][]; //[0][1]=3 - SongCounterList.get(0) - start position will be 3
+        //[0][0]=2 - SongCounterList.get(0) = 2, num song per option. The same as SongCounterList
+        int counter;
+
+        arr_of_indexes = new int [OptionsFilesList.size()][2];
         try {
-            //Check for mounted SD
-            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
-                return;
-            }
-            etPLName=(EditText) findViewById(R.id.etPLName);
-            if(etPLName.getText().toString().length()==0){
-                PLName = getString(R.string.etPLName);
-            }
-            else{
-                PLName = etPLName.getText().toString();
-            }
-            PLName=PLName+".m3u";
+            PLName=PLName();
+            //new file for Playlist
             File file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
             PrintWriter writer = new PrintWriter(file, "utf-8");
 
-            // Write path to song to the file
+            // Save song counters values
             for (int i=0;i<OptionsFilesList.size();i++){
-                for(int j=0;j<OptionsFilesList.get(i).size();j++){
-                    writer.println(OptionsFilesList.get(i).get(j)+"\r");
+                SongCounterList.add(SongCounter(i));
+                if (SongCounterList.get(i)!=0 && NumOfSongs==0){
+                    NumOfSongs=OptionsFilesList.get(i).size();
+                }
+                arr_of_indexes[i][0]=SongCounterList.get(i);
+                arr_of_indexes[i][1]=0;
+            }
+
+
+            NumOfIterations = NumOfSongs/SongCounterList.get(0);
+            while (index!=NumOfIterations){
+                index=index+1;
+                for (int i=0; i<OptionsFilesList.size(); i++){
+                    counter=0;
+                    if (SongCounterList.get(i)!=0){
+                        for(int j=arr_of_indexes[i][1]; j<OptionsFilesList.get(i).size(); j++){
+                            // Write path to song to the file
+                            writer.println(OptionsFilesList.get(i).get(j)+"\r");
+                            counter=counter+1;
+                            if(counter==arr_of_indexes[i][0]){ //num of songs per option equals counter
+                                arr_of_indexes[i][1]=j+1;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
+
            /* ensure that everything is
             * really written out and close */
             writer.flush();
@@ -186,6 +186,31 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
         catch (IOException ioe)
         {ioe.printStackTrace();}
+    }
+
+    private int SongCounter(int index){
+        ListView lvMain = (ListView) findViewById(android.R.id.list);
+        View view;
+        EditText etSongCounter;
+        Integer SongCounter=0;
+
+        view = lvMain.getChildAt(index);
+        etSongCounter=(EditText) view.findViewById(R.id.OptionSongCounter);
+        try {
+            SongCounter = Integer.parseInt(etSongCounter.getText().toString());
+            if (SongCounter==0){
+                Log.d(LOG_TAG, "Счетчик песен равен 0. Ошибка ");
+            }
+        }
+        catch (NumberFormatException ioe)
+        {
+            Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
+            ioe.printStackTrace();
+        }
+        catch (NullPointerException npe){
+            npe.printStackTrace();
+        }
+        return SongCounter;
     }
 
     //Generate a String Array that represents all of the files found
@@ -239,6 +264,48 @@ public class MainActivity extends ListActivity implements OnClickListener {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    private void CreatePListWoutOptions(ArrayList<ArrayList<String>> OptionsFilesList){
+        //Try code and catch exceptions
+        String PLName;
+        try {
+            //Check for mounted SD and create new file for Playlist
+            PLName = PLName();
+
+            File file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
+            PrintWriter writer = new PrintWriter(file, "utf-8");
+
+            // Write path to song to the file
+            for (int i=0;i<OptionsFilesList.size();i++){
+                for(int j=0;j<OptionsFilesList.get(i).size();j++){
+                    writer.println(OptionsFilesList.get(i).get(j)+"\r");
+                }
+            }
+           /* ensure that everything is
+            * really written out and close */
+            writer.flush();
+            writer.close();
+        }
+        catch (IOException ioe)
+        {ioe.printStackTrace();}
+    }
+
+    private String PLName(){
+        String PLName;
+        //Check for mounted SD and create name for PL
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
+        }
+        etPLName=(EditText) findViewById(R.id.etPLName);
+        if(etPLName.getText().toString().length()==0){
+            PLName = getString(R.string.etPLName);
+        }
+        else{
+            PLName = etPLName.getText().toString();
+        }
+        PLName = PLName+".m3u";
+        return PLName;
     }
 
 }

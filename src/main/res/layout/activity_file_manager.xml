@@ -19,7 +19,7 @@
     <Button
         android:id="@+id/button_OK"
         android:text="@string/button_OK"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
