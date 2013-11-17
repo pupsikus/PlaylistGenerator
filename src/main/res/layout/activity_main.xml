@@ -16,6 +16,15 @@
             android:layout_height="0dip"
             android:layout_weight="1">
         </ListView>
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnPathToPL"
+            android:text="@string/btnPathToPL"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvPathToPL"/>
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

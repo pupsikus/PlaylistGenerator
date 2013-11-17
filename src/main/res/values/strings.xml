@@ -9,5 +9,6 @@
     <string name="tvPLName" >Playlist name:</string>
     <string name="etPLName" >PlaylistGenerator</string>
     <string name="ExitApp" >Exit</string>
+    <string name="btnPathToPL">Choose path for playlist</string>
 
 </resources>
