@@ -20,11 +20,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnPathToPL"
-            android:text="@string/btnPathToPL"/>
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvPathToPL"/>
+            android:text="@string/btnPathToPL"
+            android:visibility="gone"/>
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,9 +14,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * Created by PC_4i_7 on 9/23/13.
+ * Created by PC_4i_7 on 11/18/13.
  */
-public class FileManager_Activity extends ListActivity {
+public class PL_FileManager_Activity extends ListActivity {
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
     private BoxAdapter boxAdapter;
@@ -27,7 +26,6 @@ public class FileManager_Activity extends ListActivity {
     @Override
     public void onCreate(Bundle iNew) {
         super.onCreate(iNew);
-        //set main layout
         setContentView(R.layout.activity_file_manager);
         //browse to root directory
         browseTo(new File("/"));
@@ -45,40 +43,11 @@ public class FileManager_Activity extends ListActivity {
                 //set titleManager text
                 TextView titleManager = (TextView) findViewById(R.id.titleManager);
                 titleManager.setText(aDirectory.getAbsolutePath());
-
                 boxAdapter = new BoxAdapter(this, directoryEntries);
-
                 // настраиваем список
                 ListView lvMain = (ListView) findViewById(android.R.id.list);
                 lvMain.setAdapter(boxAdapter);
             }
-        }
-        else {
-            //if we want to open file, show this dialog:
-            //listener when YES button clicked
-            DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface arg0, int arg1) {
-                    //intent to navigate file
-                    Intent OpenFileIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("file://" + aDirectory.getAbsolutePath()));
-                    //start this activity
-                    startActivity(OpenFileIntent);
-                }
-            };
-            //listener when NO button clicked
-            DialogInterface.OnClickListener cancelButtonListener = new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    //do nothing
-                    //or add something you want
-                }
-            };
-
-            //create dialog
-            new AlertDialog.Builder(this)
-                    .setTitle("Please, accept your choice...") //title
-                    .setMessage("Do you want to  open file "+ aDirectory.getName() + "?") //message
-                    .setPositiveButton("Yes", okButtonListener) //positive button
-                    .setNegativeButton("No", cancelButtonListener) //negative button
-                    .show(); //show dialog
         }
     }
     //fill list
@@ -97,12 +66,8 @@ public class FileManager_Activity extends ListActivity {
                         directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
                     }
                 }
-                else if(file.isDirectory()){
-                   if(file.getName().equals("sdcard"))
-                       directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                   else if(FolderWithMusic(file.getAbsolutePath())) {
-                       directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                   }
+                else if(file.isDirectory() && file.canRead()){
+                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
                 }
             }
         }
@@ -161,32 +126,12 @@ public class FileManager_Activity extends ListActivity {
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Please, choose folder..."); //title
-                builder.setMessage("Do you want to add to a list current folder?"); //message
-                builder.setPositiveButton("Yes", OkMusicButtonListener); //positive button
-                builder.setNegativeButton("No", CancelMusicButtonListener); //negative button
-                builder.show(); //show dialog
+            builder.setTitle("Please, choose folder..."); //title
+            builder.setMessage("Do you want to add to a list current folder?"); //message
+            builder.setPositiveButton("Yes", OkMusicButtonListener); //positive button
+            builder.setNegativeButton("No", CancelMusicButtonListener); //negative button
+            builder.show(); //show dialog
         }
-    }
-
-    //Generate a String Array that represents all of the files found
-    private boolean FolderWithMusic(String directoryName) {
-        File directory = new File(directoryName);
-
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile()) {
-                if(MainSample.trackChecker(file.getName()))
-                    return true;
-            } else if (file.isDirectory() && file.canRead() ) {
-                if(FolderWithMusic(file.getAbsolutePath()))
-                    return true;
-                else
-                    return false;
-            }
-        }
-        return false;
     }
 
     //when you clicked onto item

@@ -32,6 +32,12 @@
             android:label="File Manager"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
+        <activity
+            android:name="com.playlist.playlist_generator.PL_FileManager_Activity"
+            android:windowSoftInputMode="adjustPan"
+            android:label="PL File Manager"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+         </activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.playlist.playlist_generator;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     Button btnSelectFolder; //Button Select Folder
     Button btnGeneratePL; //Button Generate Play List
     Button btnExitApp; //Exit application
+    Button btnPathToPL;
     EditText etPLName;
     TableLayout tlPLName;
     int ListSize;
@@ -49,7 +51,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
         btnSelectFolder.setOnClickListener(this);
         btnGeneratePL.setOnClickListener(this);
         btnExitApp.setOnClickListener(this);
-
     }
 
     @Override
@@ -96,24 +97,28 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
     //Check if list exists. If so - unhide button Generate
     private void checkList(){
+        btnGeneratePL=(Button) findViewById(R.id.generate);
+        tlPLName=(TableLayout) findViewById(R.id.tlPLName);
+        btnPathToPL=(Button) findViewById(R.id.btnPathToPL);
+
         if(MusicOptionsList.size()!=0){
-            btnGeneratePL=(Button) findViewById(R.id.generate);
             btnGeneratePL.setVisibility(View.VISIBLE);
-            tlPLName=(TableLayout) findViewById(R.id.tlPLName);
             tlPLName.setVisibility(View.VISIBLE);
+            btnPathToPL.setVisibility(View.VISIBLE);
         }
         else{
-            btnGeneratePL=(Button) findViewById(R.id.generate);
             btnGeneratePL.setVisibility(View.GONE);
-            tlPLName=(TableLayout) findViewById(R.id.tlPLName);
             tlPLName.setVisibility(View.GONE);
+            btnPathToPL.setVisibility(View.GONE);
         }
     }
 
     //Generate playlist
     private void PLGenerator_Button(){
         String ItemPath;
+        Intent UpdateMediaIntent;
 
+        UpdateMediaIntent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory()));
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
         //Looking for directories with songs from Folder Lists
@@ -126,6 +131,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
             Collections.shuffle(dirFiles.get(i));
         }
         CreatePList(dirFiles);
+        sendBroadcast(UpdateMediaIntent); //Updates Media Files indexes in memory
         Toast.makeText(getBaseContext(), "Loaded " + Long.toString(NumOfTracks) + " Tracks", Toast.LENGTH_SHORT).show();
     }
 
@@ -136,7 +142,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
         ArrayList<Integer> SongCounterList = new ArrayList<Integer>();
         long NumOfSongs = 0;
         long NumOfIterations;
-        Integer OptionsCounter=0;
         long index=0;
         int arr_of_indexes[][]; //[0][1]=3 - SongCounterList.get(0) - start position will be 3
         //[0][0]=2 - SongCounterList.get(0) = 2, num song per option. The same as SongCounterList
@@ -159,7 +164,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 arr_of_indexes[i][1]=0;
             }
 
-
             NumOfIterations = NumOfSongs/SongCounterList.get(0);
             while (index!=NumOfIterations){
                 index=index+1;
@@ -178,7 +182,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     }
                 }
             }
-
            /* ensure that everything is
             * really written out and close */
             writer.flush();
@@ -259,6 +262,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private void ExitApp(){
         finish();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
