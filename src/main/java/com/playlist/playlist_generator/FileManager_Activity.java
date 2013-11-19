@@ -1,9 +1,11 @@
 package com.playlist.playlist_generator;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -98,11 +100,14 @@ public class FileManager_Activity extends ListActivity {
                     }
                 }
                 else if(file.isDirectory()){
-                   if(file.getName().equals("sdcard"))
+                   /*if(file.getName().equals("sdcard"))
                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
                    else if(FolderWithMusic(file.getAbsolutePath())) {
                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                   }
+                   }*/
+                    if(FolderWithMusic(file.getAbsolutePath())) {
+                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                    }
                 }
             }
         }
@@ -168,22 +173,23 @@ public class FileManager_Activity extends ListActivity {
                 builder.show(); //show dialog
         }
     }
+    private boolean FolderWithMusic(String directoryPath){
+        Cursor cursor;
+        String selection;
+        String[] projection = {MediaStore.Audio.Media.IS_MUSIC};
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
-    //Generate a String Array that represents all of the files found
-    private boolean FolderWithMusic(String directoryName) {
-        File directory = new File(directoryName);
-
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile()) {
-                if(MainSample.trackChecker(file.getName()))
-                    return true;
-            } else if (file.isDirectory() && file.canRead() ) {
-                if(FolderWithMusic(file.getAbsolutePath()))
-                    return true;
-                else
-                    return false;
+        //Create query for searching media files in folder
+        selection = MediaStore.Audio.Media.DATA + " like " + "'%" + directoryPath + "/%'";
+        cursor = getContentResolver().query(uri, projection, selection, null, null);
+        if (cursor != null) {
+            boolean isDataPresent;
+            isDataPresent = cursor.moveToFirst();
+            if(isDataPresent){
+                return true;
+            }
+            else {
+                return false;
             }
         }
         return false;
