@@ -24,7 +24,8 @@ import java.util.List;
 
 public class MainActivity extends ListActivity implements OnClickListener {
     final String LOG_TAG = "myLogs";
-    final int REQUEST_CODE_OPTION = 1;
+    final int REQUEST_CODE_OPTION_FM = 1;
+    final int REQUEST_CODE_OPTION_PL_FM=2;
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
@@ -47,10 +48,12 @@ public class MainActivity extends ListActivity implements OnClickListener {
         btnSelectFolder = (Button) findViewById(R.id.button_select_folder);
         btnGeneratePL = (Button) findViewById(R.id.generate);
         btnExitApp = (Button) findViewById(R.id.ExitApp);
+        btnPathToPL=(Button) findViewById(R.id.btnPathToPL);
         //Button click
         btnSelectFolder.setOnClickListener(this);
         btnGeneratePL.setOnClickListener(this);
         btnExitApp.setOnClickListener(this);
+        btnPathToPL.setOnClickListener(this);
     }
 
     @Override
@@ -59,13 +62,17 @@ public class MainActivity extends ListActivity implements OnClickListener {
             case R.id.button_select_folder:
                 //Trying to create new activity fir file manager
                 Intent intent = new Intent(this, FileManager_Activity.class);
-                startActivityForResult(intent, REQUEST_CODE_OPTION);
+                startActivityForResult(intent, REQUEST_CODE_OPTION_FM);
                 break;
             case R.id.generate:
                 PLGenerator_Button();
                 break;
             case R.id.ExitApp:
                 ExitApp();
+                break;
+            case R.id.btnPathToPL:
+                Intent intent_FM = new Intent(this, PL_FileManager_Activity.class);
+                startActivityForResult(intent_FM, REQUEST_CODE_OPTION_PL_FM);
                 break;
             default:
                 break;
@@ -79,7 +86,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         // если пришло ОК
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case REQUEST_CODE_OPTION:
+                case REQUEST_CODE_OPTION_FM:
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
                     ListSize=MusicOptionsList.size()+1;
                     MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,""));
@@ -89,6 +96,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     lvMain.setAdapter(OptionBoxAdapter);
                     lvMain.setItemsCanFocus(true);
                     checkList();
+                    break;
+                case REQUEST_CODE_OPTION_PL_FM:
                     break;
             }
             // если вернулось не ОК

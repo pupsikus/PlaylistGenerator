@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class PL_FileManager_Activity extends ListActivity {
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
-    private BoxAdapter boxAdapter;
+    private PL_FM_BoxAdapter boxAdapter;
     MainActivity MainSample = new MainActivity();
 
     //when new activity starts it uses some layout
@@ -43,10 +43,11 @@ public class PL_FileManager_Activity extends ListActivity {
                 //set titleManager text
                 TextView titleManager = (TextView) findViewById(R.id.titleManager);
                 titleManager.setText(aDirectory.getAbsolutePath());
-                boxAdapter = new BoxAdapter(this, directoryEntries);
+                boxAdapter = new PL_FM_BoxAdapter(this, directoryEntries);
                 // настраиваем список
                 ListView lvMain = (ListView) findViewById(android.R.id.list);
                 lvMain.setAdapter(boxAdapter);
+                lvMain.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             }
         }
     }
