@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 /**
@@ -52,7 +52,7 @@ public class PL_FM_BoxAdapter extends BaseAdapter {
         // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.item, parent, false);
+            view = lInflater.inflate(R.layout.pl_item, parent, false);
         }
 
         DirectoryList p = getListPosition(position);
@@ -65,8 +65,8 @@ public class PL_FM_BoxAdapter extends BaseAdapter {
         // присваиваем чекбоксу обработчик
         cbChoose.setOnCheckedChangeListener(myCheckChangList);
 
-        ListView lvCheckBox = (ListView) view.findViewById(R.id.cbBox);
-        lvCheckBox.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        //ListView lvCheckBox = (ListView) view.findViewById(R.id.cbBox);
+        //lvCheckBox.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         // пишем позицию
         cbChoose.setTag(position);
@@ -91,7 +91,7 @@ public class PL_FM_BoxAdapter extends BaseAdapter {
     }
 
     // обработчик для чекбоксов
-    CompoundButton.OnCheckedChangeListener myCheckChangList = new CompoundButton.OnCheckedChangeListener() {
+    OnCheckedChangeListener myCheckChangList = new OnCheckedChangeListener() {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             // меняем данные товара (в корзине или нет)
             getListPosition((Integer) buttonView.getTag()).wasChecked = isChecked;
