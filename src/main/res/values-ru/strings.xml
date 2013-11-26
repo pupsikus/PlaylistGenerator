@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Генератор плейлистов</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="button_select_folder" >Выбрать папку с музыкой</string>
+    <string name="button_OK" >OK</string>
+    <string name="generate_playlist" >Сгенерировать</string>
+    <string name="tvPLName" >Название плейлиста:</string>
+    <string name="etPLName" >PlaylistGenerator</string>
+    <string name="ExitApp" >Выход</string>
+    <string name="btnPathToPL">Выберите путь к плейлисту</string>
+    <string name="String_PathToPL">Выберите путь к плейлисту</string>
+    <string name="tvPathToPL">Путь к плейлисту: </string>
+
+    <string name="FileManager">Файловый менеджер музыки</string>
+    <string name="PL_FileManager">Файловый менеджер путей</string>
+    <string name="SetTitleChooseFolder">Выберите папку...</string>
+    <string name="SetMessageChooseFolder">Хотите добавить текущую папку в список путей?</string>
+    <string name="PositiveButton">Да</string>
+    <string name="NegativeButton">Нет</string>
+    <string name="AcceptChoice">Подтвердите ваш выбор...</string>
+    <string name="OpenFileMessage">Вы хотите открыть файл </string>
+    <string name="SavePathToPLMessage">Вы хотите сохранить плейлист в указанную папку ?</string>
+
+</resources>

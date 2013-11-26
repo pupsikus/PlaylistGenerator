@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,11 +31,17 @@ public class MainActivity extends ListActivity implements OnClickListener {
     public OtherBoxAdapter OptionBoxAdapter;
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
     private static long NumOfTracks;
+    private String PathToPL;
+
+    private Intent IntentVar;
+
     List<String> trackNames; //Playable Track Titles
     Button btnSelectFolder; //Button Select Folder
     Button btnGeneratePL; //Button Generate Play List
     Button btnExitApp; //Exit application
     Button btnPathToPL;
+
+    TextView tvPathToPL;
     EditText etPLName;
     TableLayout tlPLName;
     int ListSize;
@@ -44,6 +51,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Search button by ID
         btnSelectFolder = (Button) findViewById(R.id.button_select_folder);
         btnGeneratePL = (Button) findViewById(R.id.generate);
@@ -54,6 +62,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
         btnGeneratePL.setOnClickListener(this);
         btnExitApp.setOnClickListener(this);
         btnPathToPL.setOnClickListener(this);
+
+        tlPLName=(TableLayout) findViewById(R.id.tlPLName);
+        tvPathToPL = (TextView) findViewById(R.id.tvPathToPL);
+
     }
 
     @Override
@@ -61,8 +73,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
         switch (v.getId()){
             case R.id.button_select_folder:
                 //Trying to create new activity fir file manager
-                Intent intent = new Intent(this, FileManager_Activity.class);
-                startActivityForResult(intent, REQUEST_CODE_OPTION_FM);
+                IntentVar = new Intent(this, FileManager_Activity.class);
+                startActivityForResult(IntentVar, REQUEST_CODE_OPTION_FM);
                 break;
             case R.id.generate:
                 PLGenerator_Button();
@@ -71,8 +83,15 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 ExitApp();
                 break;
             case R.id.btnPathToPL:
-                Intent intent_FM = new Intent(this, PL_FileManager_Activity.class);
-                startActivityForResult(intent_FM, REQUEST_CODE_OPTION_PL_FM);
+                IntentVar = new Intent(this, PL_FileManager_Activity.class);
+                String PathToPL = btnPathToPL.getText().toString();
+                if (!PathToPL.equals(getString(R.string.String_PathToPL))){
+                    IntentVar.putExtra("PathToPL",PathToPL);
+                }
+                else {
+                    IntentVar.putExtra("PathToPL","False");
+                }
+                startActivityForResult(IntentVar, REQUEST_CODE_OPTION_PL_FM);
                 break;
             default:
                 break;
@@ -87,9 +106,12 @@ public class MainActivity extends ListActivity implements OnClickListener {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE_OPTION_FM:
+                    //TODO Auto-generated method stub
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
+                    String Option = AddOption(PathList);
                     ListSize=MusicOptionsList.size()+1;
-                    MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,""));
+                    //MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,""));
+                    MusicOptionsList.add(new OptionsList(Option,PathList,R.drawable.ic_launcher,""));
                     OptionBoxAdapter = new OtherBoxAdapter(this, MusicOptionsList);
 
                     ListView lvMain = (ListView) findViewById(android.R.id.list);
@@ -98,27 +120,26 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     checkList();
                     break;
                 case REQUEST_CODE_OPTION_PL_FM:
+                    PathToPL = data.getStringExtra("PathToPL");
+                    btnPathToPL.setText(PathToPL);
                     break;
             }
-            // если вернулось не ОК
         }
     }
 
     //Check if list exists. If so - unhide button Generate
     private void checkList(){
-        btnGeneratePL=(Button) findViewById(R.id.generate);
-        tlPLName=(TableLayout) findViewById(R.id.tlPLName);
-        btnPathToPL=(Button) findViewById(R.id.btnPathToPL);
-
         if(MusicOptionsList.size()!=0){
             btnGeneratePL.setVisibility(View.VISIBLE);
             tlPLName.setVisibility(View.VISIBLE);
             btnPathToPL.setVisibility(View.VISIBLE);
+            tvPathToPL.setVisibility(View.VISIBLE);
         }
         else{
             btnGeneratePL.setVisibility(View.GONE);
             tlPLName.setVisibility(View.GONE);
             btnPathToPL.setVisibility(View.GONE);
+            tvPathToPL.setVisibility(View.GONE);
         }
     }
 
@@ -145,7 +166,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
-        // TODO Auto-generated method stub
         //Try code and catch exceptions
         String PLName;
         ArrayList<Integer> SongCounterList = new ArrayList<Integer>();
@@ -274,12 +294,19 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        //TODO Auto-generated method stub
         // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add("menu1");
+        menu.add("menu2");
+        menu.add("menu3");
+        menu.add("menu4");
+
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     private void CreatePListWoutOptions(ArrayList<ArrayList<String>> OptionsFilesList){
+        //TODO Auto-generated method stub
         //Try code and catch exceptions
         String PLName;
         try {
@@ -311,14 +338,33 @@ public class MainActivity extends ListActivity implements OnClickListener {
             Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
         }
         etPLName=(EditText) findViewById(R.id.etPLName);
-        if(etPLName.getText().toString().length()==0){
+        if(etPLName.getText().toString().length() == 0){
             PLName = getString(R.string.etPLName);
         }
         else{
             PLName = etPLName.getText().toString();
         }
-        PLName = PLName+".m3u";
+        PLName = PLName + ".m3u";
         return PLName;
+    }
+    private String AddOption(ArrayList<String> PathList){
+        String Option="Option: ";
+        for(String OptionPath : PathList){
+            String SubOption = "";
+            for(int i = OptionPath.length(); i > -1; i--){
+                if(OptionPath.indexOf("/", i)>=0){
+                    if(SubOption.equals("")){
+                        SubOption = OptionPath.substring(i);
+                    }
+                    else{
+                        SubOption = ".." + SubOption;
+                        break;
+                    }
+                }
+            }
+            Option = Option + " " + SubOption + ";";
+        }
+        return Option;
     }
 
 }

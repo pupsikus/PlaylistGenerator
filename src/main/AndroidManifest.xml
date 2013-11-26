@@ -29,13 +29,13 @@
         <activity
             android:name="com.playlist.playlist_generator.FileManager_Activity"
             android:windowSoftInputMode="adjustPan"
-            android:label="File Manager"
+            android:label="@string/FileManager"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
         <activity
             android:name="com.playlist.playlist_generator.PL_FileManager_Activity"
             android:windowSoftInputMode="adjustPan"
-            android:label="PL File Manager"
+            android:label="@string/PL_FileManager"
             android:configChanges="keyboardHidden|orientation|screenSize">
          </activity>
     </application>

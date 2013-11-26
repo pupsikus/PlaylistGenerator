@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -13,22 +12,26 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by PC_4i_7 on 11/18/13.
- */
 public class PL_FileManager_Activity extends ListActivity {
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
     private PL_FM_BoxAdapter boxAdapter;
+    private String PathToPL;
     MainActivity MainSample = new MainActivity();
 
     //when new activity starts it uses some layout
     @Override
     public void onCreate(Bundle iNew) {
         super.onCreate(iNew);
-        setContentView(R.layout.activity_file_manager);
+        setContentView(R.layout.activity_pl_file_manager);
+        PathToPL = getIntent().getStringExtra("PathToPL");
         //browse to root directory
-        browseTo(new File("/"));
+        if (PathToPL.equals("False")){
+            browseTo(new File("/"));
+        }
+        else{
+            browseTo(new File(PathToPL));
+        }
     }
 
     //browse to file or directory
@@ -47,7 +50,7 @@ public class PL_FileManager_Activity extends ListActivity {
                 // настраиваем список
                 ListView lvMain = (ListView) findViewById(android.R.id.list);
                 lvMain.setAdapter(boxAdapter);
-                lvMain.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
             }
         }
     }
@@ -82,58 +85,36 @@ public class PL_FileManager_Activity extends ListActivity {
     }
     //When you click OK Button
     public void AddPathToList(View v){
-        ArrayList<String> FoldersList = new ArrayList<String>();
-        for(DirectoryList dl : boxAdapter.getBox()){
-            //If item is checked then boolean wasChecked = true
-            if(dl.wasChecked){
-                FoldersList.add(dl.getPath());
+        TextView TitleManager = (TextView)findViewById(R.id.titleManager);
+        PathToPL = TitleManager.getText().toString();
+        /*
+        create dialog when no one where checked, but button OK was pressed
+        It means to take current folder
+        listener when OK button clicked
+        */
+        DialogInterface.OnClickListener OkMusicButtonListener = new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent MainIntent = new Intent();
+                MainIntent.putExtra("PathToPL",PathToPL);
+                setResult(RESULT_OK, MainIntent);
+                finish();
+
             }
-        }
-        if (FoldersList.size()!=0){
-            Intent MainIntent = new Intent();
-            MainIntent.putExtra("ArrayMusicDirList", FoldersList);
-            setResult(RESULT_OK, MainIntent);
-            this.finish();
-
-        }
-        else{
-            /*
-            create dialog when no one where checked, but button OK was pressed
-            It means to take current folder
-            listener when OK button clicked
-            */
-            DialogInterface.OnClickListener OkMusicButtonListener = new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface arg0, int arg1) {
-                    ArrayList<String> NewFoldersList = new ArrayList<String>();
-                    TextView titleManager;
-                    String FolderPath;
-
-                    titleManager = (TextView) findViewById(R.id.titleManager);
-                    FolderPath = titleManager.getText().toString();
-                    NewFoldersList.add(FolderPath);
-
-                    Intent MainIntent = new Intent();
-                    MainIntent.putExtra("ArrayMusicDirList", NewFoldersList);
-                    setResult(RESULT_OK, MainIntent);
-                    finish();
-
-                }
-            };
-            //listener when NO button clicked
-            DialogInterface.OnClickListener CancelMusicButtonListener = new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    //do nothing
-                    //or add something you want
-                }
-            };
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Please, choose folder..."); //title
-            builder.setMessage("Do you want to add to a list current folder?"); //message
-            builder.setPositiveButton("Yes", OkMusicButtonListener); //positive button
-            builder.setNegativeButton("No", CancelMusicButtonListener); //negative button
-            builder.show(); //show dialog
-        }
-    }
+        };
+        //listener when NO button clicked
+        DialogInterface.OnClickListener CancelMusicButtonListener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                //do nothing
+                //or add something you want
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.SetTitleChooseFolder)); //title
+        builder.setMessage(getResources().getString(R.string.SavePathToPLMessage)); //message
+        builder.setPositiveButton(getResources().getString(R.string.PositiveButton), OkMusicButtonListener); //positive button
+        builder.setNegativeButton(getResources().getString(R.string.NegativeButton), CancelMusicButtonListener); //negative button
+        builder.show(); //show dialog
+     }
 
     //when you clicked onto item
     @Override
@@ -144,12 +125,14 @@ public class PL_FileManager_Activity extends ListActivity {
         //if we select ".." then go upper
         if(selectedFileString.getPath().equals("..")){
             upOneLevel();
-        } else {
+        }
+        else {
             //browse to clicked file or directory using browseTo()
-            File clickedFile = null;
+            File clickedFile;
             clickedFile = new File(selectedFileString.getPath());
             if (clickedFile != null)
                 browseTo(clickedFile);
+
         }
     }
 }

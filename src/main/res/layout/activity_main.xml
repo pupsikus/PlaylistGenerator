@@ -13,18 +13,28 @@
         <ListView
             android:id="@id/android:list"
             android:layout_width="match_parent"
-            android:layout_height="0dip"
+            android:layout_height="wrap_content"
             android:layout_weight="1">
         </ListView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:id="@+id/tvPathToPL"
+            android:text="@string/tvPathToPL"/>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:id="@+id/btnPathToPL"
             android:text="@string/btnPathToPL"
             android:visibility="gone"/>
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:visibility="invisible"
             android:id="@+id/tlPLName">
             <TableRow>
@@ -53,6 +63,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:id="@+id/ExitApp"
             android:text="@string/ExitApp"
             android:layout_gravity="center_horizontal">

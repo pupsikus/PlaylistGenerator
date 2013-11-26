@@ -1,6 +1,5 @@
 package com.playlist.playlist_generator;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -16,9 +15,6 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by PC_4i_7 on 9/23/13.
- */
 public class FileManager_Activity extends ListActivity {
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
@@ -32,7 +28,8 @@ public class FileManager_Activity extends ListActivity {
         //set main layout
         setContentView(R.layout.activity_file_manager);
         //browse to root directory
-        browseTo(new File("/"));
+         browseTo(new File("/"));
+
     }
 
     //browse to file or directory
@@ -76,10 +73,10 @@ public class FileManager_Activity extends ListActivity {
 
             //create dialog
             new AlertDialog.Builder(this)
-                    .setTitle("Please, accept your choice...") //title
-                    .setMessage("Do you want to  open file "+ aDirectory.getName() + "?") //message
-                    .setPositiveButton("Yes", okButtonListener) //positive button
-                    .setNegativeButton("No", cancelButtonListener) //negative button
+                    .setTitle(getResources().getString(R.string.AcceptChoice)) //title
+                    .setMessage(getResources().getString(R.string.OpenFileMessage) + "'" + aDirectory.getName() + "' ?") //message
+                    .setPositiveButton(getResources().getString(R.string.PositiveButton), okButtonListener) //positive button
+                    .setNegativeButton(getResources().getString(R.string.NegativeButton), cancelButtonListener) //negative button
                     .show(); //show dialog
         }
     }
@@ -166,10 +163,10 @@ public class FileManager_Activity extends ListActivity {
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Please, choose folder..."); //title
-                builder.setMessage("Do you want to add to a list current folder?"); //message
-                builder.setPositiveButton("Yes", OkMusicButtonListener); //positive button
-                builder.setNegativeButton("No", CancelMusicButtonListener); //negative button
+                builder.setTitle(getResources().getString(R.string.SetTitleChooseFolder)); //title
+                builder.setMessage(getResources().getString(R.string.SetMessageChooseFolder)); //message
+                builder.setPositiveButton(getResources().getString(R.string.PositiveButton), OkMusicButtonListener); //positive button
+                builder.setNegativeButton(getResources().getString(R.string.NegativeButton), CancelMusicButtonListener); //nsegative button
                 builder.show(); //show dialog
         }
     }
@@ -185,12 +182,7 @@ public class FileManager_Activity extends ListActivity {
         if (cursor != null) {
             boolean isDataPresent;
             isDataPresent = cursor.moveToFirst();
-            if(isDataPresent){
-                return true;
-            }
-            else {
-                return false;
-            }
+            return isDataPresent;
         }
         return false;
     }
@@ -206,7 +198,7 @@ public class FileManager_Activity extends ListActivity {
             upOneLevel();
         } else {
             //browse to clicked file or directory using browseTo()
-            File clickedFile = null;
+            File clickedFile;
             clickedFile = new File(selectedFileString.getPath());
             if (clickedFile != null)
                 browseTo(clickedFile);
