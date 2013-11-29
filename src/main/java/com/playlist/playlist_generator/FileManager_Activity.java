@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,19 +17,31 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class FileManager_Activity extends ListActivity {
+    final String LOG_TAG = "myLogs";
     private File currentDirectory = new File("/");
     private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
     private BoxAdapter boxAdapter;
-    MainActivity MainSample = new MainActivity();
+    private String PathToMainFolder = "";
+    private MainActivity MainSample = new MainActivity();
 
     //when new activity starts it uses some layout
     @Override
     public void onCreate(Bundle iNew) {
+        Boolean FirstStart;
         super.onCreate(iNew);
         //set main layout
         setContentView(R.layout.activity_file_manager);
-        //browse to root directory
-         browseTo(new File("/"));
+        FirstStart = getIntent().getBooleanExtra("FirstChoice",true);
+        if(FirstStart){
+            //browse to root directory
+            browseTo(new File("/"));
+        }
+        else {
+            //browse to last chosen directory
+            PathToMainFolder = getIntent().getStringExtra("PathToMusicFolder");
+            browseTo(new File(PathToMainFolder));
+        }
+
 
     }
 
@@ -80,7 +93,7 @@ public class FileManager_Activity extends ListActivity {
                     .show(); //show dialog
         }
     }
-    //fill list
+    //fill list of directories
     private void fill(File[] files) {
         //clear list
         directoryEntries.clear();
@@ -97,11 +110,6 @@ public class FileManager_Activity extends ListActivity {
                     }
                 }
                 else if(file.isDirectory()){
-                   /*if(file.getName().equals("sdcard"))
-                       directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                   else if(FolderWithMusic(file.getAbsolutePath())) {
-                       directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                   }*/
                     if(FolderWithMusic(file.getAbsolutePath())) {
                         directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
                     }
@@ -126,8 +134,10 @@ public class FileManager_Activity extends ListActivity {
             }
         }
         if (FoldersList.size()!=0){
+            PathToMainFolder = this.currentDirectory.toString();
             Intent MainIntent = new Intent();
             MainIntent.putExtra("ArrayMusicDirList", FoldersList);
+            MainIntent.putExtra("MainFolderPath", PathToMainFolder);
             setResult(RESULT_OK, MainIntent);
             this.finish();
 
@@ -144,12 +154,22 @@ public class FileManager_Activity extends ListActivity {
                     TextView titleManager;
                     String FolderPath;
 
+
                     titleManager = (TextView) findViewById(R.id.titleManager);
+                    try {
+                        PathToMainFolder = titleManager.getText().toString();
+                    }
+                    catch (NullPointerException npe){
+                        Log.d(LOG_TAG, " TextView filed (title) doesn't contains text. Null pointer exception.");
+                        PathToMainFolder = "";
+                    }
+
                     FolderPath = titleManager.getText().toString();
                     NewFoldersList.add(FolderPath);
-
                     Intent MainIntent = new Intent();
+
                     MainIntent.putExtra("ArrayMusicDirList", NewFoldersList);
+                    MainIntent.putExtra("MainFolderPath", PathToMainFolder);
                     setResult(RESULT_OK, MainIntent);
                     finish();
 
@@ -170,6 +190,8 @@ public class FileManager_Activity extends ListActivity {
                 builder.show(); //show dialog
         }
     }
+
+    //Search music in folders and subfolders
     private boolean FolderWithMusic(String directoryPath){
         Cursor cursor;
         String selection;

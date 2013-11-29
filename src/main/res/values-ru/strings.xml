@@ -13,6 +13,7 @@
     <string name="btnPathToPL">Выберите путь к плейлисту</string>
     <string name="String_PathToPL">Выберите путь к плейлисту</string>
     <string name="tvPathToPL">Путь к плейлисту: </string>
+    <string name="btnDelListElem">Del</string>
 
     <string name="FileManager">Файловый менеджер музыки</string>
     <string name="PL_FileManager">Файловый менеджер путей</string>
@@ -23,5 +24,8 @@
     <string name="AcceptChoice">Подтвердите ваш выбор...</string>
     <string name="OpenFileMessage">Вы хотите открыть файл </string>
     <string name="SavePathToPLMessage">Вы хотите сохранить плейлист в указанную папку ?</string>
+
+    <string name="Done">Готово!</string>
+    <string name="Option">Опция: </string>
 
 </resources>

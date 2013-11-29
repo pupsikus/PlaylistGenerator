@@ -12,9 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 
-/**
- * Created by PC_4i_7 on 10/9/13.
- */
 public class OtherBoxAdapter extends BaseAdapter{
     Context ctx;
     LayoutInflater lInflater;
@@ -62,6 +59,8 @@ public class OtherBoxAdapter extends BaseAdapter{
 
         return view;
     }
+
+
     // позиция
     OptionsList getListPosition(int position) {
         return ((OptionsList) getItem(position));

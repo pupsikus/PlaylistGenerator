@@ -27,13 +27,20 @@
         android:inputType="numberDecimal"
         android:hint="1"
         android:clickable="true"
-        android:focusable="true"
         android:textSize="20sp"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp"
+        android:focusable="true"/>
     <ImageView
         android:id="@+id/OptionImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher">
     </ImageView>
+    <Button
+        android:id="@+id/btnDelListElem"
+        android:text="@string/btnDelListElem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:onClick="DelListElemButton"/>
 </LinearLayout>

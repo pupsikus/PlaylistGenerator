@@ -1,8 +1,7 @@
 package com.playlist.playlist_generator;
 
-import java.lang.String; /**
- * Created by PC_4i_7 on 9/23/13.
- */
+import java.lang.String;
+
 public class DirectoryList {
     String ItemDesc;
     String ItemPath;

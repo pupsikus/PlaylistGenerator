@@ -1,8 +1,6 @@
 package com.playlist.playlist_generator;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -25,11 +23,12 @@ public class PL_FileManager_Activity extends ListActivity {
         super.onCreate(iNew);
         setContentView(R.layout.activity_pl_file_manager);
         PathToPL = getIntent().getStringExtra("PathToPL");
-        //browse to root directory
         if (PathToPL.equals("False")){
+            //browse to root directory
             browseTo(new File("/"));
         }
         else{
+            //browse to last chosen directory
             browseTo(new File(PathToPL));
         }
     }
@@ -87,40 +86,18 @@ public class PL_FileManager_Activity extends ListActivity {
     public void AddPathToList(View v){
         TextView TitleManager = (TextView)findViewById(R.id.titleManager);
         PathToPL = TitleManager.getText().toString();
-        /*
-        create dialog when no one where checked, but button OK was pressed
-        It means to take current folder
-        listener when OK button clicked
-        */
-        DialogInterface.OnClickListener OkMusicButtonListener = new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface arg0, int arg1) {
-                Intent MainIntent = new Intent();
-                MainIntent.putExtra("PathToPL",PathToPL);
-                setResult(RESULT_OK, MainIntent);
-                finish();
+        Intent MainIntent = new Intent();
 
-            }
-        };
-        //listener when NO button clicked
-        DialogInterface.OnClickListener CancelMusicButtonListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-                //do nothing
-                //or add something you want
-            }
-        };
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.SetTitleChooseFolder)); //title
-        builder.setMessage(getResources().getString(R.string.SavePathToPLMessage)); //message
-        builder.setPositiveButton(getResources().getString(R.string.PositiveButton), OkMusicButtonListener); //positive button
-        builder.setNegativeButton(getResources().getString(R.string.NegativeButton), CancelMusicButtonListener); //negative button
-        builder.show(); //show dialog
+        MainIntent.putExtra("PathToPL",PathToPL);
+        setResult(RESULT_OK, MainIntent);
+        finish();
      }
 
     //when you clicked onto item
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         //get selected file name
-        DirectoryList selectedFileString= directoryEntries.get(position);
+        DirectoryList selectedFileString = directoryEntries.get(position);
 
         //if we select ".." then go upper
         if(selectedFileString.getPath().equals("..")){

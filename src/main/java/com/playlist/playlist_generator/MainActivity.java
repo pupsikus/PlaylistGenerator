@@ -26,12 +26,12 @@ import java.util.List;
 public class MainActivity extends ListActivity implements OnClickListener {
     final String LOG_TAG = "myLogs";
     final int REQUEST_CODE_OPTION_FM = 1;
-    final int REQUEST_CODE_OPTION_PL_FM=2;
+    final int REQUEST_CODE_OPTION_PL_FM = 2;
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
-    private static long NumOfTracks;
     private String PathToPL;
+    private String PathToMusicFolder = "";
 
     private Intent IntentVar;
 
@@ -57,6 +57,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         btnGeneratePL = (Button) findViewById(R.id.generate);
         btnExitApp = (Button) findViewById(R.id.ExitApp);
         btnPathToPL=(Button) findViewById(R.id.btnPathToPL);
+
         //Button click
         btnSelectFolder.setOnClickListener(this);
         btnGeneratePL.setOnClickListener(this);
@@ -72,8 +73,17 @@ public class MainActivity extends ListActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button_select_folder:
-                //Trying to create new activity fir file manager
+                //Start Music File Manager activity
                 IntentVar = new Intent(this, FileManager_Activity.class);
+                if(PathToMusicFolder.equals("")){
+                    IntentVar.putExtra("FirstChoice",true);
+                    IntentVar.putExtra("PathToMusicFolder",PathToMusicFolder);
+                }
+                else
+                {
+                    IntentVar.putExtra("FirstChoice",false);
+                    IntentVar.putExtra("PathToMusicFolder",PathToMusicFolder);
+                }
                 startActivityForResult(IntentVar, REQUEST_CODE_OPTION_FM);
                 break;
             case R.id.generate:
@@ -83,12 +93,15 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 ExitApp();
                 break;
             case R.id.btnPathToPL:
+                //Start Path File Manager activity
                 IntentVar = new Intent(this, PL_FileManager_Activity.class);
                 String PathToPL = btnPathToPL.getText().toString();
                 if (!PathToPL.equals(getString(R.string.String_PathToPL))){
+                    //Last choice
                     IntentVar.putExtra("PathToPL",PathToPL);
                 }
                 else {
+                    //First choice
                     IntentVar.putExtra("PathToPL","False");
                 }
                 startActivityForResult(IntentVar, REQUEST_CODE_OPTION_PL_FM);
@@ -102,12 +115,14 @@ public class MainActivity extends ListActivity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // запишем в лог значения requestCode и resultCode
         Log.d("myLogs", "requestCode = " + requestCode + ", resultCode = " + resultCode);
-        // если пришло ОК
+        //If result is positive
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE_OPTION_FM:
                     //TODO Auto-generated method stub
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
+                    PathToMusicFolder = data.getStringExtra("MainFolderPath");
+
                     String Option = AddOption(PathList);
                     ListSize=MusicOptionsList.size()+1;
                     //MusicOptionsList.add(new OptionsList("Option " + ListSize,PathList,R.drawable.ic_launcher,""));
@@ -161,8 +176,13 @@ public class MainActivity extends ListActivity implements OnClickListener {
             Collections.shuffle(dirFiles.get(i));
         }
         CreatePList(dirFiles);
-        sendBroadcast(UpdateMediaIntent); //Updates Media Files indexes in memory
-        Toast.makeText(getBaseContext(), "Loaded " + Long.toString(NumOfTracks) + " Tracks", Toast.LENGTH_SHORT).show();
+
+        //Updates Media Files indexes in memory
+        UpdateMediaIntent.setAction("Some Action");
+        UpdateMediaIntent.addCategory("Some Category");
+        sendBroadcast(UpdateMediaIntent);
+
+        Toast.makeText(getBaseContext(), "Done!", Toast.LENGTH_SHORT).show();
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
@@ -237,12 +257,24 @@ public class MainActivity extends ListActivity implements OnClickListener {
         catch (NumberFormatException ioe)
         {
             Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
-            ioe.printStackTrace();
+            SongCounter= 1;
         }
         catch (NullPointerException npe){
-            npe.printStackTrace();
+            SongCounter= 1;
         }
         return SongCounter;
+    }
+
+    public void DelListElemButton(View v){
+        //TODO Auto-generated method stub
+        int itemToRemove  = getListView().getPositionForView(v);
+        MusicOptionsList.remove(itemToRemove);
+        OptionBoxAdapter = new OtherBoxAdapter(this, MusicOptionsList);
+
+        ListView lvMain = (ListView) findViewById(android.R.id.list);
+        lvMain.setAdapter(OptionBoxAdapter);
+        lvMain.setItemsCanFocus(true);
+        checkList();
     }
 
     //Generate a String Array that represents all of the files found
@@ -273,8 +305,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     //trackNamesCollection.add(temp[i]);
                 }
             }
-            //Toast.makeText(getBaseContext(), "Loaded " + Integer.toString(trackNames.size()) + " Tracks", Toast.LENGTH_SHORT).show();
-            NumOfTracks= trackNames.size();
         }
     }
 
@@ -348,7 +378,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         return PLName;
     }
     private String AddOption(ArrayList<String> PathList){
-        String Option="Option: ";
+        String Option = getResources().getString(R.string.Option);
         for(String OptionPath : PathList){
             String SubOption = "";
             for(int i = OptionPath.length(); i > -1; i--){
