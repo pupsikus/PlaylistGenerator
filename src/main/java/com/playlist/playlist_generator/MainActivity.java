@@ -2,6 +2,7 @@ package com.playlist.playlist_generator;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,7 +47,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
     TableLayout tlPLName;
     int ListSize;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
@@ -66,7 +66,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
         tlPLName=(TableLayout) findViewById(R.id.tlPLName);
         tvPathToPL = (TextView) findViewById(R.id.tvPathToPL);
-
     }
 
     @Override
@@ -162,8 +161,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private void PLGenerator_Button(){
         String ItemPath;
         Intent UpdateMediaIntent;
-
         UpdateMediaIntent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory()));
+
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
         //Looking for directories with songs from Folder Lists
@@ -178,11 +177,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
         CreatePList(dirFiles);
 
         //Updates Media Files indexes in memory
-        UpdateMediaIntent.setAction("Some Action");
-        UpdateMediaIntent.addCategory("Some Category");
         sendBroadcast(UpdateMediaIntent);
 
         Toast.makeText(getBaseContext(), "Done!", Toast.LENGTH_SHORT).show();
+
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
@@ -235,9 +233,30 @@ public class MainActivity extends ListActivity implements OnClickListener {
             * really written out and close */
             writer.flush();
             writer.close();
+
+            //Uri uri = Uri.parse("file://" + Environment.getExternalStorageDirectory());
+            //MediaScannerConnection.MediaScannerConnectionClient client = new MyMediaScannerConnectionClient(getApplicationContext(),file,null);
+            //scanMedia(file.getAbsolutePath());
+
+            /*MediaScannerConnection.scanFile(getApplicationContext(),
+                    new String[] { file.toString() }, new String[] { "audio/x-mpegurl" },
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
+                    });*/
         }
         catch (IOException ioe)
         {ioe.printStackTrace();}
+    }
+
+    private void scanMedia(String path) {
+        File file = new File(path);
+        Uri uri = Uri.fromFile(file);
+        Intent scanFileIntent = new Intent(
+                Intent.ACTION_MEDIA_MOUNTED, uri);
+        sendBroadcast(scanFileIntent);
     }
 
     private int SongCounter(int index){
@@ -302,7 +321,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 //Only accept files that have one of the extensions in the EXTENSIONS array
                 if(trackChecker(dirFiles.get(i))){
                     trackNames.add(dirFiles.get(i));
-                    //trackNamesCollection.add(temp[i]);
                 }
             }
         }
