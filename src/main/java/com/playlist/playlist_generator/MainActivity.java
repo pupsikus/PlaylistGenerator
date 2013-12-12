@@ -6,6 +6,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -28,11 +29,14 @@ public class MainActivity extends ListActivity implements OnClickListener {
     final String LOG_TAG = "myLogs";
     final int REQUEST_CODE_OPTION_FM = 1;
     final int REQUEST_CODE_OPTION_PL_FM = 2;
+    final int SDK_VERSION = Integer.valueOf(android.os.Build.VERSION.SDK);
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
     private String PathToPL;
     private String PathToMusicFolder = "";
+    File file;
+    MediaScannerConnection msConn;
 
     private Intent IntentVar;
 
@@ -177,10 +181,11 @@ public class MainActivity extends ListActivity implements OnClickListener {
         CreatePList(dirFiles);
 
         //Updates Media Files indexes in memory
-        sendBroadcast(UpdateMediaIntent);
+        if (SDK_VERSION < 19){
+            sendBroadcast(UpdateMediaIntent);
+        }
 
-        Toast.makeText(getBaseContext(), "Done!", Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(getBaseContext(), getResources().getString(R.string.Done), Toast.LENGTH_SHORT).show();
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
@@ -198,7 +203,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         try {
             PLName=PLName();
             //new file for Playlist
-            File file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
+            file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
             PrintWriter writer = new PrintWriter(file, "utf-8");
 
             // Save song counters values
@@ -234,29 +239,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
             writer.flush();
             writer.close();
 
-            //Uri uri = Uri.parse("file://" + Environment.getExternalStorageDirectory());
-            //MediaScannerConnection.MediaScannerConnectionClient client = new MyMediaScannerConnectionClient(getApplicationContext(),file,null);
-            //scanMedia(file.getAbsolutePath());
-
-            /*MediaScannerConnection.scanFile(getApplicationContext(),
-                    new String[] { file.toString() }, new String[] { "audio/x-mpegurl" },
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        public void onScanCompleted(String path, Uri uri) {
-                            Log.i("ExternalStorage", "Scanned " + path + ":");
-                            Log.i("ExternalStorage", "-> uri=" + uri);
-                        }
-                    });*/
         }
         catch (IOException ioe)
         {ioe.printStackTrace();}
-    }
-
-    private void scanMedia(String path) {
-        File file = new File(path);
-        Uri uri = Uri.fromFile(file);
-        Intent scanFileIntent = new Intent(
-                Intent.ACTION_MEDIA_MOUNTED, uri);
-        sendBroadcast(scanFileIntent);
     }
 
     private int SongCounter(int index){
