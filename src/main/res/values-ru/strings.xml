@@ -27,5 +27,6 @@
 
     <string name="Done">Готово!</string>
     <string name="Option">Опция: </string>
+    <string name="tvPLExt">.m3u</string>
 
 </resources>

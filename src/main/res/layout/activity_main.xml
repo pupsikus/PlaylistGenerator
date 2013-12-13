@@ -49,6 +49,11 @@
                     android:id="@+id/etPLName"
                     android:inputType="textCapWords"
                     android:hint="@string/etPLName"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvPLExt"
+                    android:text="@string/tvPLExt"/>
             </TableRow>
         </TableLayout>
         <Button

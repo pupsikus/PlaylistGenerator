@@ -36,11 +36,12 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher">
     </ImageView>
-    <Button
+    <ImageButton
+        android:src="@drawable/recycle"
         android:id="@+id/btnDelListElem"
         android:text="@string/btnDelListElem"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:focusable="true"
         android:onClick="DelListElemButton"/>
 </LinearLayout>

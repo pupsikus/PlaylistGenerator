@@ -380,6 +380,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         PLName = PLName + ".m3u";
         return PLName;
     }
+
     private String AddOption(ArrayList<String> PathList){
         String Option = getResources().getString(R.string.Option);
         for(String OptionPath : PathList){
