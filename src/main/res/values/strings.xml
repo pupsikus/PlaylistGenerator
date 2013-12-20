@@ -24,6 +24,7 @@
     <string name="AcceptChoice">Please, accept your choice…</string>
     <string name="OpenFileMessage">Do you want to  open file </string>
     <string name="SavePathToPLMessage">Do you want to save playlist in current folder ?</string>
+    <string name="DefaultPathToPL">Make this path as default</string>
 
     <string name="Done">Done!</string>
     <string name="Option">Option: </string>

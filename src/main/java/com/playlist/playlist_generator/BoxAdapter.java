@@ -48,6 +48,7 @@ public class BoxAdapter extends BaseAdapter {
     // пункт списка
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        String ItemDesc;
         // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
@@ -60,6 +61,12 @@ public class BoxAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.tvDescr)).setText(p.ItemDesc);
         ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
         CheckBox cbChoose = (CheckBox) view.findViewById(R.id.cbBox);
+
+        ItemDesc = p.ItemDesc;
+        if (ItemDesc.equals("..")){
+            cbChoose.setClickable(false);
+        }
+
 
         // присваиваем чекбоксу обработчик
         cbChoose.setOnCheckedChangeListener(myCheckChangList);

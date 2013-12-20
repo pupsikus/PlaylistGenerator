@@ -31,6 +31,25 @@
             android:id="@+id/btnPathToPL"
             android:text="@string/btnPathToPL"
             android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LLPathToPL"
+            android:visibility="gone">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cbPL_path"
+                android:checked="false"
+                android:visibility="visible"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPL_path"
+                android:text="@string/DefaultPathToPL"
+                android:visibility="visible"/>
+        </LinearLayout>
+
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

@@ -1,7 +1,10 @@
 package com.playlist.playlist_generator;
 
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +15,9 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -36,6 +41,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private String PathToPL;
     private String PathToMusicFolder = "";
     File file;
+    MyDB mydb;
     MediaScannerConnection msConn;
 
     private Intent IntentVar;
@@ -48,7 +54,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
     TextView tvPathToPL;
     EditText etPLName;
+    CheckBox cbPathToPL;
     TableLayout tlPLName;
+    LinearLayout LL_PathToPL;
     int ListSize;
 
     @Override
@@ -70,6 +78,11 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
         tlPLName=(TableLayout) findViewById(R.id.tlPLName);
         tvPathToPL = (TextView) findViewById(R.id.tvPathToPL);
+        cbPathToPL =(CheckBox)findViewById(R.id.cbPL_path);
+        LL_PathToPL=(LinearLayout)findViewById(R.id.LLPathToPL);
+
+        mydb = new MyDB(this);
+        SetDefaultPLPtah(btnPathToPL);
     }
 
     @Override
@@ -152,12 +165,14 @@ public class MainActivity extends ListActivity implements OnClickListener {
             tlPLName.setVisibility(View.VISIBLE);
             btnPathToPL.setVisibility(View.VISIBLE);
             tvPathToPL.setVisibility(View.VISIBLE);
+            LL_PathToPL.setVisibility(View.VISIBLE);
         }
         else{
             btnGeneratePL.setVisibility(View.GONE);
             tlPLName.setVisibility(View.GONE);
             btnPathToPL.setVisibility(View.GONE);
             tvPathToPL.setVisibility(View.GONE);
+            LL_PathToPL.setVisibility(View.GONE);
         }
     }
 
@@ -166,6 +181,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
         String ItemPath;
         Intent UpdateMediaIntent;
         UpdateMediaIntent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory()));
+
+        if(cbPathToPL.isChecked()){
+            UpdateDefaultPLPath(btnPathToPL.getText().toString());
+        }
 
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
@@ -188,6 +207,29 @@ public class MainActivity extends ListActivity implements OnClickListener {
         Toast.makeText(getBaseContext(), getResources().getString(R.string.Done), Toast.LENGTH_SHORT).show();
     }
 
+    private void UpdateDefaultPLPath(String PathToPL){
+        if (!PathToPL.equals(getResources().getString(R.string.btnPathToPL))){
+            ContentValues cv = new ContentValues();
+            SQLiteDatabase db = mydb.getWritableDatabase();
+            cv.put("pl_path", PathToPL);
+            long rowID = db.insert("plgTable", null, cv);
+            Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+        }
+    }
+
+    private void SetDefaultPLPtah(Button btnPathToPL){
+        SQLiteDatabase db = mydb.getWritableDatabase();
+        Cursor c = db.query("plgTable",null,null,null,null,null,null);
+        if (c.moveToFirst()) {
+            int PathToPL_ColIndex = c.getColumnIndex("pl_path");
+            String defaultPlPath = c.getString(PathToPL_ColIndex);
+            if (!defaultPlPath.equals("")){
+                btnPathToPL.setText(defaultPlPath);
+            }
+        }
+        c.close();
+    }
+
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
         //Try code and catch exceptions
         String PLName;
@@ -208,7 +250,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
             // Save song counters values
             for (int i=0;i<OptionsFilesList.size();i++){
-                SongCounterList.add(SongCounter(i));
+                SongCounterList.add(SongCounter(OptionsFilesList,i));
                 if (SongCounterList.get(i)!=0 && NumOfSongs==0){
                     NumOfSongs=OptionsFilesList.get(i).size();
                 }
@@ -244,7 +286,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         {ioe.printStackTrace();}
     }
 
-    private int SongCounter(int index){
+    private int SongCounter(ArrayList<ArrayList<String>> OptionsFilesList,int index){
         ListView lvMain = (ListView) findViewById(android.R.id.list);
         View view;
         EditText etSongCounter;
@@ -261,16 +303,15 @@ public class MainActivity extends ListActivity implements OnClickListener {
         catch (NumberFormatException ioe)
         {
             Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
-            SongCounter= 1;
+            SongCounter= OptionsFilesList.get(index).size();
         }
         catch (NullPointerException npe){
-            SongCounter= 1;
+            SongCounter= OptionsFilesList.get(index).size();
         }
         return SongCounter;
     }
 
     public void DelListElemButton(View v){
-        //TODO Auto-generated method stub
         int itemToRemove  = getListView().getPositionForView(v);
         MusicOptionsList.remove(itemToRemove);
         OptionBoxAdapter = new OtherBoxAdapter(this, MusicOptionsList);
@@ -322,6 +363,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     }
 
     private void ExitApp(){
+        mydb.close();
         finish();
     }
 

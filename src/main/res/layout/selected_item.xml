@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:hint="1"
+        android:hint="*"
         android:clickable="true"
         android:textSize="20sp"
         android:layout_marginTop="5dp"
@@ -37,7 +37,7 @@
         android:src="@drawable/ic_launcher">
     </ImageView>
     <ImageButton
-        android:src="@drawable/recycle"
+        android:background="@drawable/recycle"
         android:id="@+id/btnDelListElem"
         android:text="@string/btnDelListElem"
         android:layout_width="wrap_content"
