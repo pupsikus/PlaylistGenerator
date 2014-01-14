@@ -9,12 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 
-public class PL_FM_BoxAdapter extends BaseAdapter {
+public class PL_Path_BoxAdapter extends BaseAdapter {
     Context ctx;
     LayoutInflater lInflater;
     ArrayList<DirectoryList> objects;
 
-    PL_FM_BoxAdapter(Context context, ArrayList<DirectoryList> items) {
+    PL_Path_BoxAdapter(Context context, ArrayList<DirectoryList> items) {
         ctx = context;
         objects = items;
         lInflater = (LayoutInflater) ctx

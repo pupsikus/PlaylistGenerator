@@ -2,9 +2,6 @@ package com.playlist.playlist_generator;
 
 import java.util.ArrayList;
 
-/**
- * Created by PC_4i_7 on 9/27/13.
- */
 public class OptionsList {
     String OptionDesc;
     ArrayList<String> OptionPath = new ArrayList<String>();

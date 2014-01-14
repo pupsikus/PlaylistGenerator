@@ -110,7 +110,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 break;
             case R.id.btnPathToPL:
                 //Start Path File Manager activity
-                IntentVar = new Intent(this, PL_FileManager_Activity.class);
+                IntentVar = new Intent(this, PL_Path_Activity.class);
                 String PathToPL = btnPathToPL.getText().toString();
                 if (!PathToPL.equals(getString(R.string.String_PathToPL))){
                     //Last choice
@@ -208,12 +208,21 @@ public class MainActivity extends ListActivity implements OnClickListener {
     }
 
     private void UpdateDefaultPLPath(String PathToPL){
+        long rowID;
         if (!PathToPL.equals(getResources().getString(R.string.btnPathToPL))){
             ContentValues cv = new ContentValues();
             SQLiteDatabase db = mydb.getWritableDatabase();
+            Cursor c = db.query("plgTable",null,null,null,null,null,null);
             cv.put("pl_path", PathToPL);
-            long rowID = db.insert("plgTable", null, cv);
-            Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            if (c.moveToFirst()) {
+                rowID = db.update("plgTable", cv, "id=?", new String[]{"1"});
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+            else{
+                rowID = db.insert("plgTable", null, cv);
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+            c.close();
         }
     }
 

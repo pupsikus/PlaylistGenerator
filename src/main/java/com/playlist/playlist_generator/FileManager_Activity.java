@@ -1,13 +1,10 @@
 package com.playlist.playlist_generator;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -16,10 +13,9 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FileManager_Activity extends ListActivity {
+public class FileManager_Activity extends MyFileManager {
     final String LOG_TAG = "myLogs";
-    private File currentDirectory = new File("/");
-    private ArrayList<DirectoryList> directoryEntries = new ArrayList<DirectoryList>();
+    private ArrayList<DirectoryList> dirEntries = new ArrayList<DirectoryList>();
     private BoxAdapter boxAdapter;
     private String PathToMainFolder = "";
     private MainActivity MainSample = new MainActivity();
@@ -31,6 +27,7 @@ public class FileManager_Activity extends ListActivity {
         super.onCreate(iNew);
         //set main layout
         setContentView(R.layout.activity_file_manager);
+        SetOnlyMusicFolders(true);
         FirstStart = getIntent().getBooleanExtra("FirstChoice",true);
         if(FirstStart){
             //browse to root directory
@@ -46,19 +43,20 @@ public class FileManager_Activity extends ListActivity {
     }
 
     //browse to file or directory
-    private void browseTo(final File aDirectory){
+    @Override
+    public void browseTo(final File aDirectory){
         //if we want to browse directory
         if (aDirectory.isDirectory()){
             //fill list with files from this directory
             if (aDirectory.canRead()){
-                this.currentDirectory = aDirectory;
+                super.SetCurrentDirectory(aDirectory);
                 fill(aDirectory.listFiles());
-
+                dirEntries = super.getDirEntries();
                 //set titleManager text
                 TextView titleManager = (TextView) findViewById(R.id.titleManager);
                 titleManager.setText(aDirectory.getAbsolutePath());
 
-                boxAdapter = new BoxAdapter(this, directoryEntries);
+                boxAdapter = new BoxAdapter(this, dirEntries);
 
                 // настраиваем список
                 ListView lvMain = (ListView) findViewById(android.R.id.list);
@@ -93,37 +91,7 @@ public class FileManager_Activity extends ListActivity {
                     .show(); //show dialog
         }
     }
-    //fill list of directories
-    private void fill(File[] files) {
-        //clear list
-        directoryEntries.clear();
 
-        if (this.currentDirectory.getParent() != null){
-            directoryEntries.add(new DirectoryList("..","..", R.drawable.ic_launcher, false));
-        }
-        //add every file into list
-        for (File file : files) {
-            if (file.canRead()){
-                if(file.isFile()){
-                    if(MainSample.trackChecker(file.getName())){
-                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                    }
-                }
-                else if(file.isDirectory()){
-                    if(FolderWithMusic(file.getAbsolutePath())) {
-                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
-                    }
-                }
-            }
-        }
-    }
-
-    //browse to parent directory
-    private void upOneLevel(){
-        if(this.currentDirectory.getParent() != null) {
-            browseTo(currentDirectory.getParentFile());
-        }
-    }
     //When you click OK Button
     public void AddPathToList(View v){
         ArrayList<String> FoldersList = new ArrayList<String>();
@@ -134,7 +102,7 @@ public class FileManager_Activity extends ListActivity {
             }
         }
         if (FoldersList.size()!=0){
-            PathToMainFolder = this.currentDirectory.toString();
+            PathToMainFolder = GetCurrentDirectory().toString();
             Intent MainIntent = new Intent();
             MainIntent.putExtra("ArrayMusicDirList", FoldersList);
             MainIntent.putExtra("MainFolderPath", PathToMainFolder);
@@ -191,29 +159,11 @@ public class FileManager_Activity extends ListActivity {
         }
     }
 
-    //Search music in folders and subfolders
-    private boolean FolderWithMusic(String directoryPath){
-        Cursor cursor;
-        String selection;
-        String[] projection = {MediaStore.Audio.Media.IS_MUSIC};
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-        //Create query for searching media files in folder
-        selection = MediaStore.Audio.Media.DATA + " like " + "'%" + directoryPath + "/%'";
-        cursor = getContentResolver().query(uri, projection, selection, null, null);
-        if (cursor != null) {
-            boolean isDataPresent;
-            isDataPresent = cursor.moveToFirst();
-            return isDataPresent;
-        }
-        return false;
-    }
-
     //when you clicked onto item
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         //get selected file name
-        DirectoryList selectedFileString= directoryEntries.get(position);
+        DirectoryList selectedFileString= dirEntries.get(position);
 
         //if we select ".." then go upper
         if(selectedFileString.getPath().equals("..")){

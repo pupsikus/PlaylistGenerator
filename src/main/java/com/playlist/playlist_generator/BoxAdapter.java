@@ -10,6 +10,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -49,6 +51,7 @@ public class BoxAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         String ItemDesc;
+        File file;
         // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
@@ -65,8 +68,15 @@ public class BoxAdapter extends BaseAdapter {
         ItemDesc = p.ItemDesc;
         if (ItemDesc.equals("..")){
             cbChoose.setClickable(false);
+            cbChoose.setVisibility(View.GONE);
         }
-
+        else{
+            file = new File(p.ItemPath);
+            if(!file.isDirectory()){
+                cbChoose.setClickable(false);
+                cbChoose.setVisibility(View.GONE);
+            }
+        }
 
         // присваиваем чекбоксу обработчик
         cbChoose.setOnCheckedChangeListener(myCheckChangList);

@@ -1,7 +1,5 @@
 package com.playlist.playlist_generator;
 
-
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
