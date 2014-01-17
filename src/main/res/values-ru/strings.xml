@@ -30,4 +30,8 @@
     <string name="Option">Опция: </string>
     <string name="tvPLExt">.m3u</string>
 
+    <string name="Settings_Back">Назад</string>
+    <string name="Settings_Music_Path">Путь к музыке(по умолчанию):</string>
+    <string name="Settings_PL_Path">Путь к списку воспроизведения(по умолчанию):</string>
+
 </resources>

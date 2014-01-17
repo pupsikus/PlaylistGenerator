@@ -30,6 +30,10 @@
     <string name="Option">Option: </string>
     <string name="tvPLExt">.m3u</string>
 
+    <string name="Settings_Back">Back</string>
+    <string name="Settings_Music_Path">Default music path:</string>
+    <string name="Settings_PL_Path">Default playlist path:</string>
+
 
 
 

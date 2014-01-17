@@ -12,6 +12,7 @@ import android.os.Environment;
 
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -82,7 +83,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         LL_PathToPL=(LinearLayout)findViewById(R.id.LLPathToPL);
 
         mydb = new MyDB(this);
-        SetDefaultPLPtah(btnPathToPL);
+        GetDefaultPLPtah(btnPathToPL);
     }
 
     @Override
@@ -120,8 +121,11 @@ public class MainActivity extends ListActivity implements OnClickListener {
                     //First choice
                     IntentVar.putExtra("PathToPL","False");
                 }
+                IntentVar.putExtra("MainActivity",true);
+                IntentVar.putExtra("PL",true);
                 startActivityForResult(IntentVar, REQUEST_CODE_OPTION_PL_FM);
                 break;
+
             default:
                 break;
         }
@@ -226,7 +230,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
     }
 
-    private void SetDefaultPLPtah(Button btnPathToPL){
+    private void GetDefaultPLPtah(Button btnPathToPL){
         SQLiteDatabase db = mydb.getWritableDatabase();
         Cursor c = db.query("plgTable",null,null,null,null,null,null);
         if (c.moveToFirst()) {
@@ -378,15 +382,21 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //TODO Auto-generated method stub
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add("menu1");
-        menu.add("menu2");
-        menu.add("menu3");
-        menu.add("menu4");
-
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                IntentVar = new Intent(this, Settings_activity.class);
+                startActivity(IntentVar);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void CreatePListWoutOptions(ArrayList<ArrayList<String>> OptionsFilesList){

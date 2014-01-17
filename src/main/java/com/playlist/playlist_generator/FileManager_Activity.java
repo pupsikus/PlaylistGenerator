@@ -3,6 +3,8 @@ package com.playlist.playlist_generator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,29 +21,31 @@ public class FileManager_Activity extends MyFileManager {
     private BoxAdapter boxAdapter;
     private String PathToMainFolder = "";
     private MainActivity MainSample = new MainActivity();
+    Settings_activity sa = new Settings_activity();
+    String DefaultPath;
+    MyDB mydb;
 
     //when new activity starts it uses some layout
     @Override
     public void onCreate(Bundle iNew) {
-        Boolean FirstStart;
+        Boolean Bool_FirstStart;
         super.onCreate(iNew);
         //set main layout
         setContentView(R.layout.activity_file_manager);
         SetOnlyMusicFolders(true);
-        FirstStart = getIntent().getBooleanExtra("FirstChoice",true);
-        if(FirstStart){
+        mydb = new MyDB(this);
+        DefaultPath = sa.GetDefaultPath("Music",mydb);
+        Bool_FirstStart = getIntent().getBooleanExtra("FirstChoice",true);
+        if(Bool_FirstStart){
             //browse to root directory
-            browseTo(new File("/"));
+            browseTo(new File(DefaultPath));
         }
         else {
             //browse to last chosen directory
             PathToMainFolder = getIntent().getStringExtra("PathToMusicFolder");
             browseTo(new File(PathToMainFolder));
         }
-
-
     }
-
     //browse to file or directory
     @Override
     public void browseTo(final File aDirectory){
@@ -64,8 +68,7 @@ public class FileManager_Activity extends MyFileManager {
             }
         }
         else {
-            //if we want to open file, show this dialog:
-            //listener when YES button clicked
+            //open file dialog:
             DialogInterface.OnClickListener okButtonListener = new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface arg0, int arg1) {
                     //intent to navigate file
@@ -78,7 +81,6 @@ public class FileManager_Activity extends MyFileManager {
             DialogInterface.OnClickListener cancelButtonListener = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     //do nothing
-                    //or add something you want
                 }
             };
 
