@@ -113,6 +113,9 @@ public class Settings_activity extends MyFileManager {
         if (defaultPath == null){
             defaultPath = "/";
         }
+        else if (defaultPath.equals("")){
+            defaultPath = "/";
+        }
         c.close();
         return defaultPath;
     }
