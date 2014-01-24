@@ -20,6 +20,7 @@ public class Settings_activity extends MyFileManager {
             new ArrayList<HashMap<String,String>>();
     final int REQUEST_CODE_MUSIC_PATH = 1;
     final int REQUEST_CODE_PL_PATH = 2;
+    View vew;
     //String DefaultPath = "/";
     String DefaultMusicPath;
     String DefaultPLPath;
@@ -64,8 +65,10 @@ public class Settings_activity extends MyFileManager {
         Intent IntentVar;
         switch (position){
             case 0: //Back
-                IntentVar = new Intent(this, MainActivity.class);
-                startActivity(IntentVar);
+                finish();
+                //IntentVar = new Intent(this, MainActivity.class);
+
+                //startActivity(IntentVar);
                 break;
             case 1: //Music path
                 IntentVar = new Intent(this, PL_Path_Activity.class);
@@ -73,8 +76,8 @@ public class Settings_activity extends MyFileManager {
                 break;
             case 2: //PL path
                 IntentVar = new Intent(this, PL_Path_Activity.class);
+                IntentVar.putExtra("PL",true);
                 startActivityForResult(IntentVar, REQUEST_CODE_PL_PATH);
-                IntentVar.putExtra("PL",false);
                 break;
             default:
                 break;
@@ -87,12 +90,26 @@ public class Settings_activity extends MyFileManager {
         Log.d("myLogs", "requestCode = " + requestCode + ", resultCode = " + resultCode);
         //If result is positive
         if (resultCode == RESULT_OK) {
-            switch (requestCode) {
+            MyDB mydb = new MyDB(this);
+            DefaultMusicPath = GetDefaultPath("Music",mydb);
+            DefaultPLPath = GetDefaultPath("PL",mydb);
+            list.clear();
+            SimpleAdapter adapter = new SimpleAdapter(
+                    this,
+                    list,
+                    R.layout.settings_row,
+                    new String[] {"header","description"},
+                    new int[] {R.id.settings_item,R.id.settings_sub_item}
+            );
+            fillList();
+            setListAdapter(adapter);
+
+            /*switch (requestCode) {
                 case REQUEST_CODE_MUSIC_PATH:
                     break;
                 case REQUEST_CODE_PL_PATH:
                     break;
-            }
+            }*/
         }
     }
 

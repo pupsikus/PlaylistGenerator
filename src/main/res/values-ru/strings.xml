@@ -33,5 +33,6 @@
     <string name="Settings_Back">Назад</string>
     <string name="Settings_Music_Path">Путь к музыке(по умолчанию):</string>
     <string name="Settings_PL_Path">Путь к списку воспроизведения(по умолчанию):</string>
+    <string name="clear_db">Сбросить</string>
 
 </resources>

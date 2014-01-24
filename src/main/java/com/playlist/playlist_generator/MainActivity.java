@@ -236,8 +236,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
         if (c.moveToFirst()) {
             int PathToPL_ColIndex = c.getColumnIndex("pl_path");
             String defaultPlPath = c.getString(PathToPL_ColIndex);
-            if (!defaultPlPath.equals("")){
-                btnPathToPL.setText(defaultPlPath);
+            if (defaultPlPath!=null && !defaultPlPath.equals("")){
+                    btnPathToPL.setText(defaultPlPath);
             }
         }
         c.close();

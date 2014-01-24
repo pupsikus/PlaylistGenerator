@@ -1,7 +1,11 @@
 package com.playlist.playlist_generator;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 public class PL_Path_Activity extends MyFileManager {
     private ArrayList<DirectoryList> dirEntries = new ArrayList<DirectoryList>();
     private String PathToPL;
+    final String LOG_TAG = "myLogs";
     Boolean isMainActivity;
     Boolean isPL;
     Settings_activity sa = new Settings_activity();
@@ -56,8 +61,37 @@ public class PL_Path_Activity extends MyFileManager {
     public void AddPathToList(View v){
         TextView TitleManager = (TextView)findViewById(R.id.titleManager);
         PathToPL = TitleManager.getText().toString();
-        Intent MainIntent = new Intent();
+        long rowID;
 
+        ContentValues cv = new ContentValues();
+        SQLiteDatabase db = mydb.getWritableDatabase();
+        Cursor c = db.query("plgTable",null,null,null,null,null,null);
+        if (!isMainActivity && isPL){
+            cv.put("pl_path", PathToPL);
+            if (c.moveToFirst()) {
+                rowID = db.update("plgTable", cv, "id=?", new String[]{"1"});
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+            else{
+                rowID = db.insert("plgTable", null, cv);
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+
+        }
+        else if (!isMainActivity && !isPL){
+            cv.put("music_path", PathToPL);
+            if (c.moveToFirst()) {
+                rowID = db.update("plgTable", cv, "id=?", new String[]{"1"});
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+            else{
+                rowID = db.insert("plgTable", null, cv);
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+        }
+        c.close();
+
+        Intent MainIntent = new Intent();
         MainIntent.putExtra("PathToPL",PathToPL);
         MainIntent.putExtra("MusicPath",PathToPL);
         setResult(RESULT_OK, MainIntent);
