@@ -1,6 +1,7 @@
 package com.playlist.playlist_generator;
 
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Settings_activity extends MyFileManager {
+    final String LOG_TAG = "my_logs:";
     static final ArrayList<HashMap<String,String>> list =
             new ArrayList<HashMap<String,String>>();
     final int REQUEST_CODE_MUSIC_PATH = 1;
@@ -29,19 +31,7 @@ public class Settings_activity extends MyFileManager {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        MyDB mydb = new MyDB(this);
-        DefaultMusicPath = GetDefaultPath("Music",mydb);
-        DefaultPLPath = GetDefaultPath("PL",mydb);
-        list.clear();
-        SimpleAdapter adapter = new SimpleAdapter(
-            this,
-            list,
-            R.layout.settings_row,
-            new String[] {"header","description"},
-            new int[] {R.id.settings_item,R.id.settings_sub_item}
-        );
-        fillList();
-        setListAdapter(adapter);
+        setDbPath();
     }
     private void fillList() {
         HashMap<String,String> Back_row = new HashMap<String,String>();
@@ -66,9 +56,6 @@ public class Settings_activity extends MyFileManager {
         switch (position){
             case 0: //Back
                 finish();
-                //IntentVar = new Intent(this, MainActivity.class);
-
-                //startActivity(IntentVar);
                 break;
             case 1: //Music path
                 IntentVar = new Intent(this, PL_Path_Activity.class);
@@ -90,19 +77,7 @@ public class Settings_activity extends MyFileManager {
         Log.d("myLogs", "requestCode = " + requestCode + ", resultCode = " + resultCode);
         //If result is positive
         if (resultCode == RESULT_OK) {
-            MyDB mydb = new MyDB(this);
-            DefaultMusicPath = GetDefaultPath("Music",mydb);
-            DefaultPLPath = GetDefaultPath("PL",mydb);
-            list.clear();
-            SimpleAdapter adapter = new SimpleAdapter(
-                    this,
-                    list,
-                    R.layout.settings_row,
-                    new String[] {"header","description"},
-                    new int[] {R.id.settings_item,R.id.settings_sub_item}
-            );
-            fillList();
-            setListAdapter(adapter);
+            setDbPath();
 
             /*switch (requestCode) {
                 case REQUEST_CODE_MUSIC_PATH:
@@ -136,4 +111,39 @@ public class Settings_activity extends MyFileManager {
         c.close();
         return defaultPath;
     }
+
+    public void buttonReset(View v){
+        MyDB mydb = new MyDB(this);
+        ContentValues cv = new ContentValues();
+        String defaultPath = "";
+        SQLiteDatabase db = mydb.getWritableDatabase();
+        Cursor c = db.query("plgTable",null,null,null,null,null,null);
+        cv.put("pl_path", defaultPath);
+        cv.put("music_path", defaultPath);
+        if (c.moveToFirst()) {
+            int rowID = db.update("plgTable", cv, "id=?", new String[]{"1"});
+            Log.d(LOG_TAG, "row updated, ID = " + rowID);
+        }
+        c.close();
+        mydb.close();
+
+        setDbPath();
+    }
+    private void setDbPath(){
+        MyDB mydb = new MyDB(this);
+        DefaultMusicPath = GetDefaultPath("Music",mydb);
+        DefaultPLPath = GetDefaultPath("PL",mydb);
+        list.clear();
+        SimpleAdapter adapter = new SimpleAdapter(
+                this,
+                list,
+                R.layout.settings_row,
+                new String[] {"header","description"},
+                new int[] {R.id.settings_item,R.id.settings_sub_item}
+        );
+        fillList();
+        mydb.close();
+        setListAdapter(adapter);
+    }
+
 }

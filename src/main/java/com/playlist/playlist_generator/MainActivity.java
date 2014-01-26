@@ -211,38 +211,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
         Toast.makeText(getBaseContext(), getResources().getString(R.string.Done), Toast.LENGTH_SHORT).show();
     }
 
-    private void UpdateDefaultPLPath(String PathToPL){
-        long rowID;
-        if (!PathToPL.equals(getResources().getString(R.string.btnPathToPL))){
-            ContentValues cv = new ContentValues();
-            SQLiteDatabase db = mydb.getWritableDatabase();
-            Cursor c = db.query("plgTable",null,null,null,null,null,null);
-            cv.put("pl_path", PathToPL);
-            if (c.moveToFirst()) {
-                rowID = db.update("plgTable", cv, "id=?", new String[]{"1"});
-                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
-            }
-            else{
-                rowID = db.insert("plgTable", null, cv);
-                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
-            }
-            c.close();
-        }
-    }
-
-    private void GetDefaultPLPtah(Button btnPathToPL){
-        SQLiteDatabase db = mydb.getWritableDatabase();
-        Cursor c = db.query("plgTable",null,null,null,null,null,null);
-        if (c.moveToFirst()) {
-            int PathToPL_ColIndex = c.getColumnIndex("pl_path");
-            String defaultPlPath = c.getString(PathToPL_ColIndex);
-            if (defaultPlPath!=null && !defaultPlPath.equals("")){
-                    btnPathToPL.setText(defaultPlPath);
-            }
-        }
-        c.close();
-    }
-
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
         //Try code and catch exceptions
         String PLName;
@@ -258,13 +226,14 @@ public class MainActivity extends ListActivity implements OnClickListener {
         try {
             PLName=PLName();
             //new file for Playlist
-            file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
+            //file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
+            file = new File(PathToPL,PLName);
             PrintWriter writer = new PrintWriter(file, "utf-8");
 
             // Save song counters values
             for (int i=0;i<OptionsFilesList.size();i++){
                 SongCounterList.add(SongCounter(OptionsFilesList,i));
-                if (SongCounterList.get(i)!=0 && NumOfSongs==0){
+                if (SongCounterList.get(i)!=0 && NumOfSongs == 0){
                     NumOfSongs=OptionsFilesList.get(i).size();
                 }
                 arr_of_indexes[i][0]=SongCounterList.get(i);
@@ -375,28 +344,36 @@ public class MainActivity extends ListActivity implements OnClickListener {
         return false;
     }
 
-    private void ExitApp(){
-        mydb.close();
-        finish();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                IntentVar = new Intent(this, Settings_activity.class);
-                startActivity(IntentVar);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    private void UpdateDefaultPLPath(String PathToPL){
+        long rowID;
+        if (!PathToPL.equals(getResources().getString(R.string.btnPathToPL))){
+            ContentValues cv = new ContentValues();
+            SQLiteDatabase db = mydb.getWritableDatabase();
+            Cursor c = db.query("plgTable",null,null,null,null,null,null);
+            cv.put("pl_path", PathToPL);
+            if (c.moveToFirst()) {
+                rowID = db.update("plgTable", cv, "id=?", new String[]{"1"});
+                Log.d(LOG_TAG, "row updated, ID = " + rowID);
+            }
+            else{
+                rowID = db.insert("plgTable", null, cv);
+                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            }
+            c.close();
         }
+    }
+
+    private void GetDefaultPLPtah(Button btnPathToPL){
+        SQLiteDatabase db = mydb.getWritableDatabase();
+        Cursor c = db.query("plgTable",null,null,null,null,null,null);
+        if (c.moveToFirst()) {
+            int PathToPL_ColIndex = c.getColumnIndex("pl_path");
+            String defaultPlPath = c.getString(PathToPL_ColIndex);
+            if (defaultPlPath!=null && !defaultPlPath.equals("")){
+                btnPathToPL.setText(defaultPlPath);
+            }
+        }
+        c.close();
     }
 
     private void CreatePListWoutOptions(ArrayList<ArrayList<String>> OptionsFilesList){
@@ -407,7 +384,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
             //Check for mounted SD and create new file for Playlist
             PLName = PLName();
 
-            File file = new File(Environment.getExternalStorageDirectory() + "/Music",PLName);
+            File file = new File(PathToPL,PLName);
             PrintWriter writer = new PrintWriter(file, "utf-8");
 
             // Write path to song to the file
@@ -460,6 +437,30 @@ public class MainActivity extends ListActivity implements OnClickListener {
             Option = Option + " " + SubOption + ";";
         }
         return Option;
+    }
+
+    private void ExitApp(){
+        mydb.close();
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                IntentVar = new Intent(this, Settings_activity.class);
+                startActivity(IntentVar);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

@@ -13,9 +13,10 @@
         android:text="@string/clear_db"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/clear_db"
+        android:id="@+id/button_clear_db"
         android:layout_gravity="center_horizontal"
         android:visibility="visible"
-        android:layout_weight="0">
+        android:layout_weight="0"
+        android:onClick="buttonReset">
     </Button>
 </LinearLayout>
