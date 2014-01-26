@@ -129,6 +129,7 @@ public class Settings_activity extends MyFileManager {
 
         setDbPath();
     }
+
     private void setDbPath(){
         MyDB mydb = new MyDB(this);
         DefaultMusicPath = GetDefaultPath("Music",mydb);
