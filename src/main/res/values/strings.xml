@@ -25,6 +25,7 @@
     <string name="OpenFileMessage">Do you want to  open file </string>
     <string name="SavePathToPLMessage">Do you want to save playlist in current folder ?</string>
     <string name="DefaultPathToPL">Make this path as default</string>
+    <string name="ChoosePathToPL">Choose path to playlist first.</string>
 
     <string name="Done">Done!</string>
     <string name="Option">Option: </string>

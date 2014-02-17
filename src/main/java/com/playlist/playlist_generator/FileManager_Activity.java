@@ -3,8 +3,6 @@ package com.playlist.playlist_generator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,10 +18,9 @@ public class FileManager_Activity extends MyFileManager {
     private ArrayList<DirectoryList> dirEntries = new ArrayList<DirectoryList>();
     private BoxAdapter boxAdapter;
     private String PathToMainFolder = "";
-    private MainActivity MainSample = new MainActivity();
-    Settings_activity sa = new Settings_activity();
-    String DefaultPath;
-    MyDB mydb;
+    private Settings_activity sa = new Settings_activity();
+    private String DefaultPath;
+    private MyDB mydb;
 
     //when new activity starts it uses some layout
     @Override
@@ -48,7 +45,7 @@ public class FileManager_Activity extends MyFileManager {
     }
     //browse to file or directory
     @Override
-    public void browseTo(final File aDirectory){
+    protected void browseTo(final File aDirectory){
         //if we want to browse directory
         if (aDirectory.isDirectory()){
             //fill list with files from this directory

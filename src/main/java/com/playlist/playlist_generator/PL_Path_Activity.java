@@ -17,11 +17,11 @@ public class PL_Path_Activity extends MyFileManager {
     private ArrayList<DirectoryList> dirEntries = new ArrayList<DirectoryList>();
     private String PathToPL;
     final String LOG_TAG = "myLogs";
-    Boolean isMainActivity;
-    Boolean isPL;
-    Settings_activity sa = new Settings_activity();
-    String DefaultPath;
-    MyDB mydb;
+    private Boolean isMainActivity;
+    private Boolean isPL;
+    private Settings_activity sa = new Settings_activity();
+    private String DefaultPath;
+    private MyDB mydb;
 
     //when new activity starts it uses some layout
     @Override

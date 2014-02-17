@@ -18,7 +18,7 @@ public class MyFileManager extends ListActivity {
     private boolean OnlyMusicFolders = false;
 
     //browse to file or directory
-    public void browseTo(final File aDirectory){
+    protected void browseTo(final File aDirectory){
         //if we want to browse directory
         if (aDirectory.isDirectory()){
             //fill list with files from this directory
@@ -38,12 +38,12 @@ public class MyFileManager extends ListActivity {
     }
 
     //fill list
-    public void fill(File[] files) {
+    protected void fill(File[] files) {
         //clear list
         directoryEntries.clear();
 
         if (this.currentDirectory.getParent() != null){
-            directoryEntries.add(new DirectoryList("..","..", R.drawable.ic_launcher, false));
+            directoryEntries.add(new DirectoryList("..","..", R.drawable.arrow_up, false));
         }
         //add every file into list
         for (File file : files) {
@@ -60,7 +60,12 @@ public class MyFileManager extends ListActivity {
                         }
                     }
                     else{
-                        directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                        if(FolderWithMusic(file.getAbsolutePath())) {
+                            directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                        }
+                        else{
+                            directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.file, false));
+                        }
                     }
                 }
             }
@@ -68,14 +73,14 @@ public class MyFileManager extends ListActivity {
     }
 
     //browse to parent directory
-    public void upOneLevel(){
+    protected void upOneLevel(){
         if(this.currentDirectory.getParent() != null) {
             browseTo(currentDirectory.getParentFile());
         }
     }
 
     //Search music in folders and subfolders
-    public boolean FolderWithMusic(String directoryPath){
+    protected boolean FolderWithMusic(String directoryPath){
         Cursor cursor;
         String selection;
         String[] projection = {MediaStore.Audio.Media.IS_MUSIC};
@@ -92,18 +97,18 @@ public class MyFileManager extends ListActivity {
         return false;
     }
 
-    public void SetOnlyMusicFolders(Boolean Flag){
+    protected void SetOnlyMusicFolders(Boolean Flag){
         OnlyMusicFolders = Flag;
     }
 
-    public ArrayList<DirectoryList> getDirEntries(){
+    protected ArrayList<DirectoryList> getDirEntries(){
         return directoryEntries;
     }
 
-    public void SetCurrentDirectory(File CurDirPath){
+    protected void SetCurrentDirectory(File CurDirPath){
             currentDirectory = CurDirPath;
     }
-    public File GetCurrentDirectory(){
+    protected File GetCurrentDirectory(){
         return currentDirectory;
     }
 }

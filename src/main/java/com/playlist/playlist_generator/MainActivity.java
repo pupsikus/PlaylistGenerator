@@ -41,9 +41,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
     private String PathToPL;
     private String PathToMusicFolder = "";
-    File file;
-    MyDB mydb;
-    MediaScannerConnection msConn;
+    private File file;
+    private MyDB mydb;
 
     private Intent IntentVar;
 
@@ -184,6 +183,11 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private void PLGenerator_Button(){
         String ItemPath;
         Intent UpdateMediaIntent;
+
+        if (btnPathToPL.getText().toString().equals(getResources().getString(R.string.btnPathToPL))){
+            Toast.makeText(getBaseContext(), getResources().getString(R.string.ChoosePathToPL), Toast.LENGTH_SHORT).show();
+            return;
+        }
         UpdateMediaIntent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory()));
 
         if(cbPathToPL.isChecked()){
@@ -192,16 +196,25 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
         trackNames = new ArrayList<String>();
         ArrayList<ArrayList<String>> dirFiles = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> dirAllFiles = new ArrayList<ArrayList<String>>();
+        dirAllFiles.add(new ArrayList<String>());
         //Looking for directories with songs from Folder Lists
         for(int i=0;i < MusicOptionsList.size();i++){
             dirFiles.add(new ArrayList<String>());
             for(int j=0; j < MusicOptionsList.get(i).getOptionPathSize(); j++){
                 ItemPath = MusicOptionsList.get(i).getPath(j);
                 addTracks(getTracks(ItemPath, dirFiles.get(i)));
+                addTracks(getTracks(ItemPath, dirAllFiles.get(0)));
             }
             Collections.shuffle(dirFiles.get(i));
         }
-        CreatePList(dirFiles);
+        Collections.shuffle(dirAllFiles.get(0));
+        if (IsSimplePL(dirFiles)){
+            CreatePList(dirAllFiles);
+        }
+        else{
+            CreatePList(dirFiles);
+        }
 
         //Updates Media Files indexes in memory
         if (SDK_VERSION < 19){
@@ -215,9 +228,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
         //Try code and catch exceptions
         String PLName;
         ArrayList<Integer> SongCounterList = new ArrayList<Integer>();
-        long NumOfSongs = 0;
-        long NumOfIterations;
-        long index=0;
+        long NumOfSongs[] = new long[OptionsFilesList.size()];
+        long NumOfIterations = 0;
+        long tempVar = 0;
+        long index = 0;
         int arr_of_indexes[][]; //[0][1]=3 - SongCounterList.get(0) - start position will be 3
         //[0][0]=2 - SongCounterList.get(0) = 2, num song per option. The same as SongCounterList
         int counter;
@@ -230,17 +244,27 @@ public class MainActivity extends ListActivity implements OnClickListener {
             file = new File(PathToPL,PLName);
             PrintWriter writer = new PrintWriter(file, "utf-8");
 
-            // Save song counters values
+            // Save song counters values and calculate number of iterations as minimum of all possible iterations
             for (int i=0;i<OptionsFilesList.size();i++){
                 SongCounterList.add(SongCounter(OptionsFilesList,i));
-                if (SongCounterList.get(i)!=0 && NumOfSongs == 0){
-                    NumOfSongs=OptionsFilesList.get(i).size();
-                }
+                NumOfSongs[i]=OptionsFilesList.get(i).size();
                 arr_of_indexes[i][0]=SongCounterList.get(i);
                 arr_of_indexes[i][1]=0;
+                if (arr_of_indexes[i][0]==0){
+                    tempVar = 0;
+                }
+                else{
+                    tempVar = NumOfSongs[i]/arr_of_indexes[i][0];
+                }
+
+                if (NumOfIterations == 0){
+                    NumOfIterations = tempVar;
+                }
+                else if(NumOfIterations > 0 && tempVar != 0 && NumOfIterations > tempVar){
+                    NumOfIterations = tempVar;
+                }
             }
 
-            NumOfIterations = NumOfSongs/SongCounterList.get(0);
             while (index!=NumOfIterations){
                 index=index+1;
                 for (int i=0; i<OptionsFilesList.size(); i++){
@@ -265,7 +289,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
         }
         catch (IOException ioe)
-        {ioe.printStackTrace();}
+        {
+            Log.d(LOG_TAG, "Файл является null или путь к файлу равен null ");
+            ioe.printStackTrace();
+        }
     }
 
     private int SongCounter(ArrayList<ArrayList<String>> OptionsFilesList,int index){
@@ -278,19 +305,55 @@ public class MainActivity extends ListActivity implements OnClickListener {
         etSongCounter=(EditText) view.findViewById(R.id.OptionSongCounter);
         try {
             SongCounter = Integer.parseInt(etSongCounter.getText().toString());
-            if (SongCounter==0){
+            if (SongCounter == 0){
                 Log.d(LOG_TAG, "Счетчик песен равен 0. Ошибка ");
+            }
+            else if(SongCounter > OptionsFilesList.get(index).size()){
+                SongCounter = OptionsFilesList.get(index).size();
             }
         }
         catch (NumberFormatException ioe)
         {
             Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
-            SongCounter= OptionsFilesList.get(index).size();
+            SongCounter = OptionsFilesList.get(index).size();
         }
         catch (NullPointerException npe){
-            SongCounter= OptionsFilesList.get(index).size();
+            SongCounter = OptionsFilesList.get(index).size();
         }
         return SongCounter;
+    }
+
+    private boolean IsSimplePL(ArrayList<ArrayList<String>> OptionsFilesList){
+        ListView lvMain = (ListView) findViewById(android.R.id.list);
+        View view;
+        EditText etSongCounter;
+        Integer SongCounter=0;
+        boolean IsTrue = false;
+        for (int i=0; i<OptionsFilesList.size(); i++){
+            view = lvMain.getChildAt(i);
+            etSongCounter=(EditText) view.findViewById(R.id.OptionSongCounter);
+            try {
+                SongCounter = Integer.parseInt(etSongCounter.getText().toString());
+                if (SongCounter == 0){
+                    Log.d(LOG_TAG, "Счетчик песен равен 0. Ошибка ");
+                    return false;
+                }
+                else if(SongCounter > 0){
+                    return false;
+                }
+            }
+            catch (NumberFormatException ioe)
+            {
+                Log.d(LOG_TAG, "Не удалось конвертировать счестчик песен в тип Long ");
+                SongCounter = OptionsFilesList.get(i).size();
+                IsTrue = true;
+            }
+            catch (NullPointerException npe){
+                SongCounter = OptionsFilesList.get(i).size();
+                return false;
+            }
+        }
+        return IsTrue;
     }
 
     public void DelListElemButton(View v){
@@ -334,7 +397,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
         }
     }
 
-    //Checks to make sure that the track to be loaded has a correct extenson
+    //Checks to make sure that the track to be loaded has a correct extension
     public boolean trackChecker(String trackToTest){
         for (String EXTENSION : EXTENSIONS) {
             if (trackToTest.contains(EXTENSION)) {
@@ -371,35 +434,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
             String defaultPlPath = c.getString(PathToPL_ColIndex);
             if (defaultPlPath!=null && !defaultPlPath.equals("")){
                 btnPathToPL.setText(defaultPlPath);
+                PathToPL = defaultPlPath;
             }
         }
         c.close();
-    }
-
-    private void CreatePListWoutOptions(ArrayList<ArrayList<String>> OptionsFilesList){
-        //TODO Auto-generated method stub
-        //Try code and catch exceptions
-        String PLName;
-        try {
-            //Check for mounted SD and create new file for Playlist
-            PLName = PLName();
-
-            File file = new File(PathToPL,PLName);
-            PrintWriter writer = new PrintWriter(file, "utf-8");
-
-            // Write path to song to the file
-            for (int i=0;i<OptionsFilesList.size();i++){
-                for(int j=0;j<OptionsFilesList.get(i).size();j++){
-                    writer.println(OptionsFilesList.get(i).get(j)+"\r");
-                }
-            }
-           /* ensure that everything is
-            * really written out and close */
-            writer.flush();
-            writer.close();
-        }
-        catch (IOException ioe)
-        {ioe.printStackTrace();}
     }
 
     private String PLName(){
