@@ -28,6 +28,7 @@
     <string name="ChoosePathToPL">Choose path to playlist first.</string>
 
     <string name="Done">Done!</string>
+    <string name="NotDone">Error in some option(s). Please, correct it.</string>
     <string name="Option">Option: </string>
     <string name="tvPLExt">.m3u</string>
 
@@ -36,7 +37,12 @@
     <string name="Settings_PL_Path">Default playlist path:</string>
     <string name="clear_db">Reset</string>
 
-
+    <!--AppRate-->
+    <string name="RateMe_text1">Please, rate and comment app</string>
+    <string name="RateMe_text2">. Thanks!</string>
+    <string name="RateMe_nothanks">No, thanks.</string>
+    <string name="RateMe_later">Remind me later.</string>
+    <string name="RateMe_rate">Rate</string>
 
 
 </resources>

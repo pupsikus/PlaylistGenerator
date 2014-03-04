@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MyFileManager extends ListActivity {
     private File currentDirectory = new File("/");
@@ -39,6 +40,8 @@ public class MyFileManager extends ListActivity {
 
     //fill list
     protected void fill(File[] files) {
+        File tmpfile;
+        int DirPosition = -1;
         //clear list
         directoryEntries.clear();
 
@@ -46,6 +49,23 @@ public class MyFileManager extends ListActivity {
             directoryEntries.add(new DirectoryList("..","..", R.drawable.arrow_up, false));
         }
         //add every file into list
+        for(int j=0; j<=files.length-2; j++){
+            for(int i=0; i<files.length; i++){
+                if(i!=0){
+                    if(files[i].isDirectory() && files[i-1].isFile()){
+                        tmpfile = files[i-1];
+                        files[i-1]=files[i];
+                        files[i]=tmpfile;
+
+                        DirPosition = i-1;
+                    }
+                }
+                else if(i==0 && j==0 && files[i].isDirectory()) DirPosition=0;
+            }
+        }
+        if (DirPosition>-1) Arrays.sort(files,0,DirPosition);
+        else Arrays.sort(files);
+
         for (File file : files) {
             if (file.canRead()){
                 if(file.isFile()){
@@ -56,12 +76,12 @@ public class MyFileManager extends ListActivity {
                 else if(file.isDirectory() && file.canRead()){
                     if (OnlyMusicFolders){
                         if(FolderWithMusic(file.getAbsolutePath())) {
-                            directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                            directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.music_folder, false));
                         }
                     }
                     else{
                         if(FolderWithMusic(file.getAbsolutePath())) {
-                            directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.ic_launcher, false));
+                            directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.music_folder, false));
                         }
                         else{
                             directoryEntries.add(new DirectoryList(file.getName(),file.getAbsolutePath(),R.drawable.file, false));

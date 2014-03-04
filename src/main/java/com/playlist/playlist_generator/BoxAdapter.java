@@ -14,13 +14,11 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by PC_4i_7 on 9/23/13.
- */
 public class BoxAdapter extends BaseAdapter {
     Context ctx;
     LayoutInflater lInflater;
     ArrayList<DirectoryList> objects;
+    MainActivity ma = new MainActivity();
 
     BoxAdapter(Context context, ArrayList<DirectoryList> items) {
         ctx = context;
@@ -29,30 +27,28 @@ public class BoxAdapter extends BaseAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    // кол-во элементов
     @Override
     public int getCount() {
         return objects.size();
     }
 
-    // элемент по позиции
     @Override
     public Object getItem(int position) {
         return objects.get(position);
     }
 
-    // id по позиции
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    // пункт списка
+    //List item
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         String ItemDesc;
         File file;
-        // используем созданные, но не используемые view
+
+        //Get view elements
         View view = convertView;
         if (view == null) {
             view = lInflater.inflate(R.layout.item, parent, false);
@@ -73,20 +69,22 @@ public class BoxAdapter extends BaseAdapter {
         else{
             file = new File(p.ItemPath);
             if(!file.isDirectory()){
-                cbChoose.setClickable(false);
-                cbChoose.setVisibility(View.GONE);
+                if(!ma.trackChecker(p.ItemDesc)){
+                    cbChoose.setClickable(false);
+                    cbChoose.setVisibility(View.GONE);
+                }
             }
         }
 
-        // присваиваем чекбоксу обработчик
+        //Checkbox listener
         cbChoose.setOnCheckedChangeListener(myCheckChangList);
-        // пишем позицию
+        //Write position
         cbChoose.setTag(position);
-        // заполняем данными из товаров: в корзине или нет
+        //fill checkboxes
         cbChoose.setChecked(p.wasChecked);
         return view;
     }
-    // товар по позиции
+
     DirectoryList getListPosition(int position) {
         return ((DirectoryList) getItem(position));
     }
@@ -102,10 +100,10 @@ public class BoxAdapter extends BaseAdapter {
         return box;
     }
 
-    // обработчик для чекбоксов
+    // Checkbox listener
     OnCheckedChangeListener myCheckChangList = new OnCheckedChangeListener() {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            // меняем данные товара (в корзине или нет)
+            //<ark checkbox on change
             getListPosition((Integer) buttonView.getTag()).wasChecked = isChecked;
         }
     };

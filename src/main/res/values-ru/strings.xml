@@ -28,6 +28,7 @@
     <string name="ChoosePathToPL">Выберите путь для списка воспроизведения.</string>
 
     <string name="Done">Готово!</string>
+    <string name="NotDone">Ошибка в опции. Исправьте выбор.</string>
     <string name="Option">Опция: </string>
     <string name="tvPLExt">.m3u</string>
 
@@ -35,5 +36,12 @@
     <string name="Settings_Music_Path">Путь к музыке(по умолчанию):</string>
     <string name="Settings_PL_Path">Путь к списку воспроизведения(по умолчанию):</string>
     <string name="clear_db">Сбросить</string>
+
+    <!--AppRate-->
+    <string name="RateMe_text1">Зацени и оставь коммент приложению</string>
+    <string name="RateMe_text2">. Спасибо!</string>
+    <string name="RateMe_nothanks">Нет, спасибо.</string>
+    <string name="RateMe_later">Напомнить позже.</string>
+    <string name="RateMe_rate">Оценить </string>
 
 </resources>

@@ -83,6 +83,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
         mydb = new MyDB(this);
         GetDefaultPLPtah(btnPathToPL);
+
+        AppRater.app_launched(this);
+        //AppRater.showRateDialog(this, null);
     }
 
     @Override
@@ -182,6 +185,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     //Generate playlist
     private void PLGenerator_Button(){
         String ItemPath;
+        Boolean IsMusicOption = true;
         Intent UpdateMediaIntent;
 
         if (btnPathToPL.getText().toString().equals(getResources().getString(R.string.btnPathToPL))){
@@ -206,22 +210,28 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 addTracks(getTracks(ItemPath, dirFiles.get(i)));
                 addTracks(getTracks(ItemPath, dirAllFiles.get(0)));
             }
-            Collections.shuffle(dirFiles.get(i));
+            if (dirFiles.get(i).size()>0) {Collections.shuffle(dirFiles.get(i));}
+            else {IsMusicOption=false;}
         }
-        Collections.shuffle(dirAllFiles.get(0));
-        if (IsSimplePL(dirFiles)){
-            CreatePList(dirAllFiles);
+        if (dirAllFiles.get(0).size()>0) {Collections.shuffle(dirAllFiles.get(0));}
+        else {IsMusicOption=false;}
+
+        if (IsMusicOption == true){
+            if (IsSimplePL(dirFiles)){
+                CreatePList(dirAllFiles);
+            }
+            else{
+                CreatePList(dirFiles);
+            }
+
+            //Updates Media Files indexes in memory
+            if (SDK_VERSION < 19){sendBroadcast(UpdateMediaIntent);}
+
+            Toast.makeText(getBaseContext(), getResources().getString(R.string.Done), Toast.LENGTH_SHORT).show();
         }
         else{
-            CreatePList(dirFiles);
+            Toast.makeText(getBaseContext(), getResources().getString(R.string.NotDone), Toast.LENGTH_SHORT).show();
         }
-
-        //Updates Media Files indexes in memory
-        if (SDK_VERSION < 19){
-            sendBroadcast(UpdateMediaIntent);
-        }
-
-        Toast.makeText(getBaseContext(), getResources().getString(R.string.Done), Toast.LENGTH_SHORT).show();
     }
 
     private void CreatePList(ArrayList<ArrayList<String>> OptionsFilesList){
@@ -371,15 +381,29 @@ public class MainActivity extends ListActivity implements OnClickListener {
     private ArrayList<String> getTracks(String directoryName, ArrayList<String> files) {
         File directory = new File(directoryName);
 
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile()) {
-                if(trackChecker(file.getName())){
-                    files.add(file.getAbsolutePath());
+        //directory may contain only way to file
+        if (directory.isDirectory()){
+            // get all the files from a directory
+            try{
+                File[] fList = directory.listFiles();
+                for (File file : fList) {
+                    if (file.isFile()) {
+                        if(trackChecker(file.getName())){
+                            files.add(file.getAbsolutePath());
+                        }
+                    } else if (file.isDirectory()) {
+                        getTracks(file.getAbsolutePath(), files);
+                    }
                 }
-            } else if (file.isDirectory()) {
-                getTracks(file.getAbsolutePath(), files);
+            }
+            catch (NullPointerException ex){
+                return files;
+            }
+
+        }
+        else if(directory.isFile()){
+            if(trackChecker(directory.getName())){
+                files.add(directory.getAbsolutePath());
             }
         }
         return files;
