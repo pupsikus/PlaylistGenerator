@@ -38,7 +38,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     final int SDK_VERSION = Integer.valueOf(android.os.Build.VERSION.SDK);
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
-    private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4" }; //Playable Extensions
+    private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4", ".aac", ".flac", ".m4a" }; //Playable Extensions
     private String PathToPL;
     private String PathToMusicFolder = "";
     private File file;
