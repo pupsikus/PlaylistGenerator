@@ -40,8 +40,8 @@
     <!--AppRate-->
     <string name="RateMe_text1">Please, rate and comment app</string>
     <string name="RateMe_text2">. Thanks!</string>
-    <string name="RateMe_nothanks">No, thanks.</string>
-    <string name="RateMe_later">Remind me later.</string>
+    <string name="RateMe_nothanks">No</string>
+    <string name="RateMe_later">Later</string>
     <string name="RateMe_rate">Rate</string>
 
 

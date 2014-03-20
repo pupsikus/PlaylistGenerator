@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -84,8 +83,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
         mydb = new MyDB(this);
         GetDefaultPLPtah(btnPathToPL);
 
-        AppRater.app_launched(this);
-        //AppRater.showRateDialog(this, null);
+        AppRater RateMe = new AppRater();
+        RateMe.app_launched(this);
+        //RateMe.showRateDialog(this,null);
     }
 
     @Override
@@ -135,7 +135,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // запишем в лог значения requestCode и resultCode
         Log.d("myLogs", "requestCode = " + requestCode + ", resultCode = " + resultCode);
         //If result is positive
         if (resultCode == RESULT_OK) {

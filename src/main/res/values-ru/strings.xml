@@ -40,8 +40,8 @@
     <!--AppRate-->
     <string name="RateMe_text1">Зацени и оставь коммент приложению</string>
     <string name="RateMe_text2">. Спасибо!</string>
-    <string name="RateMe_nothanks">Нет, спасибо.</string>
-    <string name="RateMe_later">Напомнить позже.</string>
-    <string name="RateMe_rate">Оценить </string>
+    <string name="RateMe_nothanks">Нет</string>
+    <string name="RateMe_later">Позже</string>
+    <string name="RateMe_rate">Оценить</string>
 
 </resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_apprate"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <TextView
+        android:id="@+id/apprate_tvText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        >
+        <TableRow>
+            <Button
+                android:id="@+id/apprate_btnRateMe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/RateMe_rate"
+                android:layout_weight="1"
+                />
+            <Button
+                android:id="@+id/apprate_btnRemind"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/RateMe_later"
+                android:layout_weight="1"
+                />
+            <Button
+                android:id="@+id/apprate_btnNo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/RateMe_nothanks"
+                android:layout_weight="1"
+                />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
