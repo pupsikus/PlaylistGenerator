@@ -17,7 +17,6 @@
         android:allowBackup="true"
         android:icon="@drawable/music_folder"
         android:label="Playlist Generator"
-        android:debuggable="false"
         android:theme="@style/AppTheme" >
         <!-- android:debuggable="false" -->
         <activity

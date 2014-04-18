@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -26,7 +25,6 @@ import java.util.regex.Pattern;
 
 public class Extensions extends ListActivity {
     private MyDB mydb;
-    private ArrayList<String> ExtList;
     private String LOG_TAG = "Extensions class:";
     private final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4", ".aac", ".flac", ".m4a" }; //Playable Extensions
     private ArrayList<File_types> file_types_container = new ArrayList<File_types>();
@@ -245,7 +243,6 @@ public class Extensions extends ListActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        //TODO
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         switch (item.getItemId()) {
             case MENU_DELETE:
