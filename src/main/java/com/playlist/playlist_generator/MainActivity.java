@@ -37,7 +37,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
     final int SDK_VERSION = Integer.valueOf(android.os.Build.VERSION.SDK);
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
-    private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4", ".aac", ".flac", ".m4a" }; //Playable Extensions
+    //private static final String[] EXTENSIONS = { ".mp3", ".mid", ".wav", ".ogg", ".mp4", ".aac", ".flac", ".m4a" }; //Playable Extensions
+    private static ArrayList<String> EXTENSIONS;
     private String PathToPL;
     private String PathToMusicFolder = "";
     private File file;
@@ -58,10 +59,19 @@ public class MainActivity extends ListActivity implements OnClickListener {
     LinearLayout LL_PathToPL;
     int ListSize;
 
+/*
+    public MainActivity(){
+        mydb = new MyDB(this);
+        Extensions extObject = new Extensions();
+        EXTENSIONS = extObject.getExtensions(mydb);
+    }
+*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         //Search button by ID
         btnSelectFolder = (Button) findViewById(R.id.button_select_folder);
@@ -86,6 +96,8 @@ public class MainActivity extends ListActivity implements OnClickListener {
         AppRater RateMe = new AppRater();
         RateMe.app_launched(this);
         //RateMe.showRateDialog(this,null);
+        Extensions extObject = new Extensions();
+        EXTENSIONS = extObject.getExtensions(mydb);
     }
 
     @Override
@@ -93,6 +105,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
         switch (v.getId()){
             case R.id.button_select_folder:
                 //Start Music File Manager activity
+                Extensions extObject = new Extensions();
+                EXTENSIONS = extObject.getExtensions(mydb);
+
                 IntentVar = new Intent(this, FileManager_Activity.class);
                 if(PathToMusicFolder.equals("")){
                     IntentVar.putExtra("FirstChoice",true);
@@ -186,6 +201,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
         String ItemPath;
         Boolean IsMusicOption = true;
         Intent UpdateMediaIntent;
+
+        Extensions extObject = new Extensions();
+        EXTENSIONS = extObject.getExtensions(mydb);
 
         if (btnPathToPL.getText().toString().equals(getResources().getString(R.string.btnPathToPL))){
             Toast.makeText(getBaseContext(), getResources().getString(R.string.ChoosePathToPL), Toast.LENGTH_SHORT).show();
@@ -424,6 +442,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
     public boolean trackChecker(String trackToTest){
         for (String EXTENSION : EXTENSIONS) {
             if (trackToTest.contains(EXTENSION)) {
+                return true;
+            }
+            if (trackToTest.contains(EXTENSION.toUpperCase())) {
                 return true;
             }
         }

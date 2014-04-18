@@ -15,8 +15,8 @@
     <string name="tvPathToPL">Path to Playlist: </string>
     <string name="btnDelListElem">Del</string>
 
-    <string name="FileManager">Music file manager</string>
-    <string name="PL_FileManager">Path manager</string>
+    <string name="FileManager">Take music from:</string>
+    <string name="PL_FileManager">Save playlist to:</string>
     <string name="SetTitleChooseFolder">Please, choose folder…</string>
     <string name="SetMessageChooseFolder">Do you want to add to a list current folder?</string>
     <string name="PositiveButton">Yes</string>
@@ -43,6 +43,15 @@
     <string name="RateMe_nothanks">No</string>
     <string name="RateMe_later">Later</string>
     <string name="RateMe_rate">Rate</string>
+
+    <!-- File Extension -->
+    <string name="Files_extensions">Files extensions</string>
+    <string name="File_extension">File extension</string>
+    <string name="Delete">Delete</string>
+    <string name="Ext_wrong">Wrong file extension!</string>
+    <string name="Add">Add</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Ext_exist">This file extension is already exists</string>
 
 
 </resources>

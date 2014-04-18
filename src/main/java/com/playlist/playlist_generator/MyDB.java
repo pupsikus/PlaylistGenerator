@@ -21,15 +21,17 @@ public class MyDB extends SQLiteOpenHelper {
                 + "music_path text" + ");");
 
         db.execSQL("create table Extensions ("
-                + "id integer primary key autoincrement,"
-                + "file_extensions text," + "check integer" + ");");
+                + "id_ext integer primary key autoincrement,"
+                + "file_extensions text,"
+                + "check_field Integer" + ");");
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if(newVersion == 2 && oldVersion == 1){
             db.execSQL("create table Extensions ("
-                    + "id integer primary key autoincrement,"
-                    + "file_extensions text," + "check integer" + ");");
+                    + "id_ext integer primary key autoincrement,"
+                    + "file_extensions text,"
+                    + "check_field Integer" + ");");
         }
     }
 }

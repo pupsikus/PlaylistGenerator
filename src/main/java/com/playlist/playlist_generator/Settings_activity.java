@@ -22,6 +22,7 @@ public class Settings_activity extends MyFileManager {
             new ArrayList<HashMap<String,String>>();
     final int REQUEST_CODE_MUSIC_PATH = 1;
     final int REQUEST_CODE_PL_PATH = 2;
+    final int REQUEST_CODE_EXTENSIONS = 3;
     View vew;
     //String DefaultPath = "/";
     String DefaultMusicPath;
@@ -48,6 +49,10 @@ public class Settings_activity extends MyFileManager {
         PL_path_row.put("header",getResources().getString(R.string.Settings_PL_Path));
         PL_path_row.put("description", DefaultPLPath);
         list.add(PL_path_row);
+
+        HashMap<String,String> File_types = new HashMap<String,String>();
+        File_types.put("header","Music file types");
+        list.add(File_types);
     }
 
     @Override
@@ -59,12 +64,17 @@ public class Settings_activity extends MyFileManager {
                 break;
             case 1: //Music path
                 IntentVar = new Intent(this, PL_Path_Activity.class);
+                IntentVar.putExtra("manager",true);
                 startActivityForResult(IntentVar, REQUEST_CODE_MUSIC_PATH);
                 break;
             case 2: //PL path
                 IntentVar = new Intent(this, PL_Path_Activity.class);
                 IntentVar.putExtra("PL",true);
                 startActivityForResult(IntentVar, REQUEST_CODE_PL_PATH);
+                break;
+            case 3: //File types
+                IntentVar = new Intent(this, Extensions.class);
+                startActivityForResult(IntentVar, REQUEST_CODE_EXTENSIONS);
                 break;
             default:
                 break;
@@ -77,14 +87,16 @@ public class Settings_activity extends MyFileManager {
         Log.d("myLogs", "requestCode = " + requestCode + ", resultCode = " + resultCode);
         //If result is positive
         if (resultCode == RESULT_OK) {
-            setDbPath();
-
-            /*switch (requestCode) {
+            switch (requestCode) {
                 case REQUEST_CODE_MUSIC_PATH:
+                    setDbPath();
                     break;
                 case REQUEST_CODE_PL_PATH:
+                    setDbPath();
                     break;
-            }*/
+                case REQUEST_CODE_EXTENSIONS:
+                    break;
+            }
         }
     }
 
@@ -118,6 +130,9 @@ public class Settings_activity extends MyFileManager {
         String defaultPath = "";
         SQLiteDatabase db = mydb.getWritableDatabase();
         Cursor c = db.query("plgTable",null,null,null,null,null,null);
+        ArrayList<String> ExtensionsList = new ArrayList<String>();
+        Extensions ExtObject = new Extensions();
+
         cv.put("pl_path", defaultPath);
         cv.put("music_path", defaultPath);
         if (c.moveToFirst()) {
@@ -125,6 +140,11 @@ public class Settings_activity extends MyFileManager {
             Log.d(LOG_TAG, "row updated, ID = " + rowID);
         }
         c.close();
+
+        int clearCount = db.delete("Extensions", null, null);
+        Log.d(LOG_TAG, "deleted rows count = " + clearCount);
+        ExtensionsList = ExtObject.ExtFirstLaunch(mydb);
+
         mydb.close();
 
         setDbPath();

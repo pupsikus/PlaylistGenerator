@@ -27,7 +27,9 @@ public class PL_Path_Activity extends MyFileManager {
     @Override
     public void onCreate(Bundle iNew) {
         super.onCreate(iNew);
+        if (getIntent().getBooleanExtra("manager",false)) setTitle( getResources().getString(R.string.FileManager));
         setContentView(R.layout.activity_pl_file_manager);
+
         mydb = new MyDB(this);
         PathToPL = getIntent().getStringExtra("PathToPL");
         isPL = getIntent().getBooleanExtra("PL", false);

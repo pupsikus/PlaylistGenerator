@@ -4,7 +4,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:descendantFocusability="blocksDescendants" >
-    <TextView android:id="@+id/titleManager"
+    <TextView
+        android:id="@+id/titleManager"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Music file types:"
@@ -18,12 +19,12 @@
         android:layout_weight="1">
     </ListView>
     <Button
-        android:id="@+id/button_Add"
+        android:id="@+id/ext_button_Add"
         android:text="Add"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
-        android:onClick="AddPathToList">
+        android:onClick="Add_file_type">
     </Button>
 </LinearLayout>

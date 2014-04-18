@@ -15,8 +15,8 @@
     <string name="tvPathToPL">Путь к плейлисту: </string>
     <string name="btnDelListElem">Del</string>
 
-    <string name="FileManager">Файловый менеджер музыки</string>
-    <string name="PL_FileManager">Файловый менеджер путей</string>
+    <string name="FileManager">Брать музыку из:</string>
+    <string name="PL_FileManager">Сохранить playlist в:</string>
     <string name="SetTitleChooseFolder">Выберите папку...</string>
     <string name="SetMessageChooseFolder">Хотите добавить текущую папку в список путей?</string>
     <string name="PositiveButton">Да</string>
@@ -43,5 +43,15 @@
     <string name="RateMe_nothanks">Нет</string>
     <string name="RateMe_later">Позже</string>
     <string name="RateMe_rate">Оценить</string>
+
+    <!-- File Extension -->
+    <string name="Files_extensions">Расширения файлов</string>
+    <string name="File_extension">Расширение файла</string>
+    <string name="Delete">Удалить</string>
+    <string name="Ext_wrong">Неправильное раширение</string>
+    <string name="Add">Добавить</string>
+    <string name="Cancel">Отмена</string>
+    <string name="Ext_exist">Такое расширение уже существует.</string>
+
 
 </resources>
