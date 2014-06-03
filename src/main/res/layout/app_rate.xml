@@ -22,6 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/RateMe_rate"
+                android:background="#00CC00"
                 android:layout_weight="1"
                 />
             <Button
@@ -29,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/RateMe_later"
+                android:background="#FFCC00"
                 android:layout_weight="1"
                 />
             <Button
@@ -36,6 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/RateMe_nothanks"
+                android:background="#FF3300"
                 android:layout_weight="1"
                 />
         </TableRow>

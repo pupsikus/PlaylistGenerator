@@ -53,5 +53,13 @@
     <string name="Cancel">Отмена</string>
     <string name="Ext_exist">Такое расширение уже существует.</string>
 
+    <!-- App Donate -->
+    <string name="Donate_title">Поддержите</string>
+    <string name="Donate_text">Если вам нравится это приложение, то поддержите разработчика. Выберите ссылку ниже и пройдите по ней для детальной информации.</string>
+
+    <!-- Color -->
+    <color name="grey">#666666</color>
+    <color name="white">#ffffff</color>
+    <color name="red">#B22222</color>
 
 </resources>

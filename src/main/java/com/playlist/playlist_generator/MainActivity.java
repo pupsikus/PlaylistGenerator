@@ -5,11 +5,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +36,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
     final String LOG_TAG = "myLogs";
     final int REQUEST_CODE_OPTION_FM = 1;
     final int REQUEST_CODE_OPTION_PL_FM = 2;
+    final int REQUEST_CODE_OPTION_SETTINGS = 3;
     final int SDK_VERSION = Integer.valueOf(android.os.Build.VERSION.SDK);
     public ArrayList<OptionsList> MusicOptionsList=new ArrayList<OptionsList>();
     public OtherBoxAdapter OptionBoxAdapter;
@@ -59,19 +62,10 @@ public class MainActivity extends ListActivity implements OnClickListener {
     LinearLayout LL_PathToPL;
     int ListSize;
 
-/*
-    public MainActivity(){
-        mydb = new MyDB(this);
-        Extensions extObject = new Extensions();
-        EXTENSIONS = extObject.getExtensions(mydb);
-    }
-*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         //Search button by ID
         btnSelectFolder = (Button) findViewById(R.id.button_select_folder);
@@ -98,6 +92,9 @@ public class MainActivity extends ListActivity implements OnClickListener {
         //RateMe.showRateDialog(this,null);
         Extensions extObject = new Extensions();
         EXTENSIONS = extObject.getExtensions(mydb);
+
+        AppDonate appDonate = new AppDonate();
+        appDonate.app_launched(this);
     }
 
     @Override
@@ -155,7 +152,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE_OPTION_FM:
-                    //TODO Auto-generated method stub
                     ArrayList<String> PathList = data.getStringArrayListExtra("ArrayMusicDirList");
                     PathToMusicFolder = data.getStringExtra("MainFolderPath");
 
@@ -173,6 +169,11 @@ public class MainActivity extends ListActivity implements OnClickListener {
                 case REQUEST_CODE_OPTION_PL_FM:
                     PathToPL = data.getStringExtra("PathToPL");
                     btnPathToPL.setText(PathToPL);
+                    PathToPLColorCheck();
+                    break;
+                case REQUEST_CODE_OPTION_SETTINGS:
+                    GetDefaultPLPtah(btnPathToPL);
+                    PathToPLColorCheck();
                     break;
             }
         }
@@ -194,6 +195,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
             tvPathToPL.setVisibility(View.GONE);
             LL_PathToPL.setVisibility(View.GONE);
         }
+        PathToPLColorCheck();
     }
 
     //Generate playlist
@@ -526,6 +528,15 @@ public class MainActivity extends ListActivity implements OnClickListener {
         finish();
     }
 
+    private void PathToPLColorCheck(){
+        if(btnPathToPL.getText().toString().equals(getResources().getString(R.string.btnPathToPL))){
+            btnPathToPL.setTextColor(Color.parseColor(getString(R.color.red)));
+        }
+        else {
+            btnPathToPL.setTextColor(Color.parseColor(getString(R.color.white)));
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -538,11 +549,11 @@ public class MainActivity extends ListActivity implements OnClickListener {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 IntentVar = new Intent(this, Settings_activity.class);
-                startActivity(IntentVar);
+                //startActivity(IntentVar);
+                startActivityForResult(IntentVar, REQUEST_CODE_OPTION_SETTINGS);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

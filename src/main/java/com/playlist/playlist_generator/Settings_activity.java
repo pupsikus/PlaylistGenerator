@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -60,6 +61,8 @@ public class Settings_activity extends MyFileManager {
         Intent IntentVar;
         switch (position){
             case 0: //Back
+                Intent MainIntent = new Intent();
+                setResult(RESULT_OK, MainIntent);
                 finish();
                 break;
             case 1: //Music path
@@ -165,6 +168,18 @@ public class Settings_activity extends MyFileManager {
         fillList();
         mydb.close();
         setListAdapter(adapter);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            Intent MainIntent = new Intent();
+            setResult(RESULT_OK, MainIntent);
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
 }

@@ -10,8 +10,8 @@
     <string name="tvPLName" >Playlist name:</string>
     <string name="etPLName" >PlaylistGenerator</string>
     <string name="ExitApp" >Exit</string>
-    <string name="btnPathToPL">Choose path for playlist</string>
-    <string name="String_PathToPL">Choose path for playlist</string>
+    <string name="btnPathToPL">Choose path to playlist</string>
+    <string name="String_PathToPL">Choose path to playlist</string>
     <string name="tvPathToPL">Path to Playlist: </string>
     <string name="btnDelListElem">Del</string>
 
@@ -53,5 +53,13 @@
     <string name="Cancel">Cancel</string>
     <string name="Ext_exist">This file extension is already exists</string>
 
+    <!-- App Donate -->
+    <string name="Donate_title">Please, donate</string>
+    <string name="Donate_text">If you like this free application, please, donate. Choose and follow the link below for detailed information.</string>
+
+    <!-- Color -->
+    <color name="grey">#666666</color>
+    <color name="white">#ffffff</color>
+    <color name="red">#B22222</color>
 
 </resources>

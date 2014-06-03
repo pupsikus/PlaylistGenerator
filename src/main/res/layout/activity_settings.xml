@@ -11,6 +11,8 @@
     </ListView>
     <Button
         android:text="@string/clear_db"
+        android:background="@color/grey"
+        android:textColor="@color/white"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button_clear_db"

@@ -21,6 +21,8 @@
     <Button
         android:id="@+id/ext_button_Add"
         android:text="Add"
+        android:background="@color/grey"
+        android:textColor="@color/white"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
